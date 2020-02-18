@@ -1,7 +1,5 @@
 - defaults:
     link:
-      create: false
-      relink: false
       force: true
 
 - clean: ['~']
@@ -12,12 +10,13 @@
     ~/.bashrc: shell/bash/bashrc
     ~/.gitconfig: git/gitconfig
     ~/.gitignore: git/gitignore
+    ~/.githooks: git/hooks
     ~/.vim: vim/vim
     ~/.vimrc: vim/vimrc
     ~/.gvimrc: vim/gvimrc
     ~/.zshrc: shell/zsh/zshrc
     ~/.zshconfigs: shell/zsh/zshconfigs
-    ~/.oh-my-zsh/themes/gitster.zsh-theme: shell/zsh/gitster.zsh-theme
+    ~/.oh-my-zsh/custom: shell/oh-my-zsh/custom
     ~/.gemrc: shell/gemrc
     ~/.wgetrc: shell/wgetrc
     ~/.screenrc: shell/screenrc

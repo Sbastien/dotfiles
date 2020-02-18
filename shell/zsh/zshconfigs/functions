@@ -5,13 +5,8 @@ function update() {
   sudo softwareupdate -i -a;
   brew update;
   brew upgrade;
-  brew cleanup;
-  sudo gem update --system;
-  cd ~/.oh-my-zsh ;
-  git stash;
-  upgrade_oh_my_zsh;
-  git stash pop;
-  cd -;
+  brew cleanup -s;
+  omz update;
 }
 
 # Create a new directory and enter it
