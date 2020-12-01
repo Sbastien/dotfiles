@@ -9,7 +9,7 @@ function update() {
   rm -rf "$(brew --cache)"; # Remove brew downloads
   cd ~/.oh-my-zsh ;
   git stash;
-  upgrade_oh_my_zsh;
+  omz update;
   git stash pop;
   cd -;
 }
