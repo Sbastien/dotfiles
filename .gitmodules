@@ -1,7 +1,6 @@
 [submodule "dotbot"]
   path = dotbot
   url = https://github.com/anishathalye/dotbot
-  ignore = dirty
 [submodule "shell/oh-my-zsh/custom/plugins/zsh-autosuggestions"]
 	path = shell/oh-my-zsh/custom/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions
