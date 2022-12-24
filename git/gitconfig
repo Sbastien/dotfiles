@@ -161,6 +161,8 @@
   default = simple
   # Make `git push` push relevant annotated tags when pushing branches out.
   followTags = true
+	autoSetupRemote = true
+	autoSetupRemote = true
 
 # URL shorthands
 
