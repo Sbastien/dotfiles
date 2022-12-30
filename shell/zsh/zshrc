@@ -10,6 +10,7 @@ for file in ~/.zshconfigs/{path,exports,aliases,functions,extra}; do
 done;
 unset file;
 
+ZSH_CUSTOM=~/.oh-my-zsh-custom
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 plugins=(zsh-autosuggestions zsh-syntax-highlighting)

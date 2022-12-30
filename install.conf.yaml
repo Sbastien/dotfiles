@@ -16,7 +16,7 @@
     ~/.gvimrc: vim/gvimrc
     ~/.zshrc: shell/zsh/zshrc
     ~/.zshconfigs: shell/zsh/zshconfigs
-    ~/.oh-my-zsh/custom: shell/oh-my-zsh/custom
+    ~/.oh-my-zsh-custom: shell/oh-my-zsh-custom
     ~/.gemrc: shell/gemrc
     ~/.wgetrc: shell/wgetrc
     ~/.screenrc: shell/screenrc
