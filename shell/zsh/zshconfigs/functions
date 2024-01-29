@@ -203,3 +203,16 @@ function getcertnames() {
 function tre() {
   tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRNX
 }
+
+# This function merges two PDF files, one with even pages and the other with odd pages in reverse order, into a single output PDF file.
+# The function takes three arguments:
+#   1. even_file: The PDF file containing the even pages.
+#   2. odd_file: The PDF file containing the odd pages in reverse order.
+#   3. output_file: The name of the output PDF file to be created.
+merge_pdfs() {
+  even_file="$1"
+  odd_file="$2"
+  output_file="$3"
+
+  pdftk A="$even_file" B="$odd_file" shuffle A Bend-1 output "$output_file"
+}
