@@ -1,0 +1,38 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+
+brew bundle --no-lock --file=/dev/stdin <<EOF
+
+cask_args appdir: "/Applications"
+
+cask "font-inconsolata"
+cask "gas-mask"
+cask "iterm2"
+cask "visual-studio-code"
+cask "firefox"
+cask "google-chrome"
+cask "brave-browser"
+cask "spotify"
+cask "docker"
+cask "expressvpn"
+cask "little-snitch"
+cask "micro-snitch"
+cask "slack"
+
+brew "rbenv"
+brew "mackup"
+brew "bash"
+brew "zsh"
+brew "wget"
+brew "bat"
+
+# Install more recent versions of some macOS tools.
+brew "vim"
+brew "grep"
+brew "openssh"
+brew "screen"
+brew "git"
+brew "tree"
+
+EOF
+{{ end -}}
