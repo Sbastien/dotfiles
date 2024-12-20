@@ -1,0 +1,30 @@
+#!/bin/sh
+
+TARGET_FILE="$HOME/.local/share/chezmoi/Brewfile"
+HASH_FILE="$HOME/.local/Brewfile.hash"
+
+bundle() {
+    echo "Brewfile has changed or is being applied for the first time. Running 'brew bundle'..."
+    brew bundle --file="$TARGET_FILE"
+    
+    sha256sum "$TARGET_FILE" | awk '{print $1}' > "$HASH_FILE"
+    echo "Brewfile has been processed and hash updated locally."
+}
+
+if [ -f "$TARGET_FILE" ]; then
+    CURRENT_HASH=$(sha256sum "$TARGET_FILE" | awk '{print $1}')
+
+    if [ -f "$HASH_FILE" ]; then
+        SAVED_HASH=$(cat "$HASH_FILE")
+    else
+        SAVED_HASH=""
+    fi
+
+    if [ "$CURRENT_HASH" != "$SAVED_HASH" ]; then
+        bundle
+    else
+        echo "No changes detected in Brewfile. Skipping 'brew bundle'."
+    fi
+else
+    echo "Brewfile not found. Skipping 'brew bundle'."
+fi

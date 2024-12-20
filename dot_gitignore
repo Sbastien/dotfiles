@@ -1,0 +1,45 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.Spotlight-V100
+.Trashes
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.bak
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Python
+__pycache__/
+*.pyc
+env/
+venv/
+
+# Archives and backups
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.bak
+
+# General build artifacts
+build/
+dist/
+*.o
+*.exe
+*.dll
+*.dSYM/
+
