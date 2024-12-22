@@ -4,6 +4,7 @@ brew "bash"
 brew "tmux"
 brew "neovim"
 brew "starship"
+brew "chezmoi"
 
 # File navigation and search
 brew "bat"

@@ -3,15 +3,37 @@
 TARGET_FILE="$HOME/.local/share/chezmoi/Brewfile"
 HASH_FILE="$HOME/.local/Brewfile.hash"
 
-bundle() {
-    echo "Brewfile has changed or is being applied for the first time. Running 'brew bundle'..."
-    brew bundle --file="$TARGET_FILE"
-    
-    sha256sum "$TARGET_FILE" | awk '{print $1}' > "$HASH_FILE"
-    echo "Brewfile has been processed and hash updated locally."
+setup_brew() {
+    if ! command -v brew >/dev/null 2>&1; then
+        echo "ℹ️ Homebrew not found in PATH. Trying to configure..."
+        if [ -d "/opt/homebrew/bin" ]; then
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+            echo "✅ Homebrew successfully configured in PATH."
+            return 0
+        else
+            echo "❌ Error: Homebrew installation not found."
+            return 1
+        fi
+    fi
+    return 0
+}
+
+run_brew_bundle() {
+    echo "🔄 Brewfile has changed or is being applied for the first time. Running 'brew bundle'..."
+    if brew bundle --file="$TARGET_FILE"; then
+        sha256sum "$TARGET_FILE" | awk '{print $1}' > "$HASH_FILE"
+        echo "✅ Brewfile has been processed and hash updated locally."
+    else
+        echo "❌ Error: 'brew bundle' failed. Hash not updated."
+        exit 1
+    fi
 }
 
 if [ -f "$TARGET_FILE" ]; then
+    echo "📄 Brewfile found. Checking for changes..."
+
+    setup_brew
+
     CURRENT_HASH=$(sha256sum "$TARGET_FILE" | awk '{print $1}')
 
     if [ -f "$HASH_FILE" ]; then
@@ -21,10 +43,10 @@ if [ -f "$TARGET_FILE" ]; then
     fi
 
     if [ "$CURRENT_HASH" != "$SAVED_HASH" ]; then
-        bundle
+        run_brew_bundle
     else
-        echo "No changes detected in Brewfile. Skipping 'brew bundle'."
+        echo "✅ No changes detected in Brewfile. Skipping 'brew bundle'."
     fi
 else
-    echo "Brewfile not found. Skipping 'brew bundle'."
+    echo "⚠️ Brewfile not found. Skipping 'brew bundle'."
 fi
