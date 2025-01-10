@@ -30,6 +30,7 @@
 
 [push]
     default = simple
+    autoSetupRemote = true
 
 [alias]
     s = status
