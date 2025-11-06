@@ -2,7 +2,7 @@
 
 add_newline = true
 
-command_timeout = 2000
+command_timeout = 1000
 
 format = """
 $os\
@@ -25,7 +25,6 @@ $python\
 $package\
 $docker_context\
 $kubernetes\
-$shell\
 $container\
 $jobs\
 ${custom.memory_usage}\
@@ -282,7 +281,7 @@ format = '[( $symbol( $cluster) )]($style)'
 disabled = false
 
 [shell]
-disabled = false
+disabled = true
 format = '[  $indicator ]($style)'
 bash_indicator = "bash"
 fish_indicator = "fish"
@@ -313,7 +312,7 @@ number_threshold = 1
 command = "starship module memory_usage"
 when = '[ "${STARSHIP_COCKPIT_MEMORY_USAGE_ENABLED:-false}" = "true" ]'
 format = "( $output )"
-disabled = false
+disabled = true
 
 [memory_usage]
 threshold = 0
@@ -334,7 +333,7 @@ fi
 """
 when = '[ "${STARSHIP_COCKPIT_BATTERY_ENABLED:-false}" = "true" ]'
 format = "( $output )"
-disabled = false
+disabled = true
 
 [battery]
 full_symbol = "󰁹"
@@ -402,7 +401,7 @@ command = """
 # Set env variables if you want to use layout aliases (in uppercase)
 #     export STARSHIP_COCKPIT_KEYBOARD_LAYOUT_ABC=ENG
 #     export STARSHIP_COCKPIT_KEYBOARD_LAYOUT_UKRAINIAN=UKR
-# 
+#
 # Implementations:
 #     macOS
 
@@ -418,4 +417,4 @@ symbol = "󰌌"
 style = "fg:color_other"
 format = '[( $symbol $output )]($style)'
 when = '[ "${STARSHIP_COCKPIT_KEYBOARD_LAYOUT_ENABLED:-false}" = "true" ]'
-disabled = false
+disabled = true

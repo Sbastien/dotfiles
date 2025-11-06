@@ -32,19 +32,47 @@
     default = simple
     autoSetupRemote = true
 
+[fetch]
+    prune = true
+
 [alias]
+    # Status & Info
     s = status
+    st = status
+
+    # Branch & Checkout
     co = checkout
+    cob = checkout -b
     br = branch
-    cm = commit
+
+    # Commit
+    cm = commit -m
+    c = commit
     amend = commit --amend --no-edit
-    lg = log --oneline --graph --decorate --all
-    df = diff
-    dc = diff --cached
+    wip = commit -m "WIP"
+
+    # Add
+    a = add
+    aa = add .
+
+    # Push & Pull
+    p = push
+    pl = pull
     pr = pull --rebase
     up = !git fetch origin && git rebase origin/$(git rev-parse --abbrev-ref HEAD)
+
+    # Diff
+    d = diff
+    df = diff
+    dc = diff --cached
+
+    # Log
+    lg = log --oneline --graph --decorate --all
+    l = log --oneline --graph --decorate
+
+    # Undo
     unstage = reset HEAD --
-    wip = commit -m "WIP"
+    undo = reset HEAD~1 --soft
 
 [include]
     path = ~/.gitconfig.local

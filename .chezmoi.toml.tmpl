@@ -1,0 +1,16 @@
+# Chezmoi configuration
+
+[edit]
+    command = "nvim"
+
+[diff]
+    command = "delta"
+    args = ["--paging=never"]
+
+[merge]
+    command = "nvim"
+    args = ["-d"]
+
+[git]
+    autoCommit = false
+    autoPush = false
