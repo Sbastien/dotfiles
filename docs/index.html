@@ -3,1219 +3,1344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dotfiles | Mission Control</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <title>.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+        /* ===========================================
+           Custom Fonts
+           =========================================== */
+        @font-face {
+            font-family: 'Paint';
+            src: url('Paint.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
 
-        * {
+        /* ===========================================
+           CSS Variables
+           =========================================== */
+        :root {
+            /* Colors */
+            --color-bg: #000;
+            --color-blood-dark: #400;
+            --color-blood: #611;
+            --color-blood-light: #833;
+            --color-blood-bright: #944;
+            --color-text: #b55;
+            --color-glow: #500;
+            --color-hint: #444;
+
+            /* Z-index layers */
+            --z-base: 10;
+            --z-effects: 25;
+            --z-overlay: 50;
+            --z-ui: 100;
+            --z-cursor: 9999;
+
+            /* Transitions */
+            --transition-fast: 0.1s;
+            --transition-normal: 0.4s;
+            --transition-slow: 0.5s;
+
+            /* Layout */
+            --edge-size: 50px;
+        }
+
+        /* ===========================================
+           Reset & Base
+           =========================================== */
+        *,
+        *::before,
+        *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --space-black: #020208;
-            --hull-dark: #0a0e14;
-            --hull-mid: #131a24;
-            --panel-bg: rgba(10, 20, 35, 0.9);
-            --accent-orange: #ff6b35;
-            --accent-cyan: #00d4ff;
-            --accent-green: #00ff9d;
-            --warning-red: #ff3366;
-            --text-bright: #e8f4ff;
-            --text-dim: #5a7a9a;
-            --border-glow: rgba(0, 212, 255, 0.4);
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
         }
 
         body {
             font-family: 'Share Tech Mono', monospace;
-            background: var(--space-black);
-            color: var(--text-bright);
-            min-height: 100vh;
-            overflow-x: hidden;
+            background: var(--color-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
         }
 
-        /* Deep space background */
-        .space {
+        /* ===========================================
+           Utility Classes
+           =========================================== */
+        .fixed-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -10;
-            background:
-                radial-gradient(ellipse at 20% 80%, rgba(60, 20, 100, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(20, 60, 100, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, #0a0a15 0%, #020208 100%);
-        }
-
-        /* Massive starfield */
-        .stars-layer {
-            position: fixed;
-            width: 300%;
-            height: 300%;
-            z-index: -9;
-        }
-
-        .stars-far {
-            background-image:
-                /* Tiny distant stars - white */
-                radial-gradient(1px 1px at 50px 100px, #fff, transparent),
-                radial-gradient(1px 1px at 150px 250px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 250px 50px, #fff, transparent),
-                radial-gradient(1px 1px at 350px 400px, rgba(255,255,255,0.7), transparent),
-                radial-gradient(1px 1px at 450px 150px, #fff, transparent),
-                radial-gradient(1px 1px at 550px 350px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 650px 500px, #fff, transparent),
-                radial-gradient(1px 1px at 750px 200px, rgba(255,255,255,0.7), transparent),
-                radial-gradient(1px 1px at 850px 450px, #fff, transparent),
-                radial-gradient(1px 1px at 950px 100px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 100px 550px, #fff, transparent),
-                radial-gradient(1px 1px at 200px 700px, rgba(255,255,255,0.7), transparent),
-                radial-gradient(1px 1px at 300px 850px, #fff, transparent),
-                radial-gradient(1px 1px at 400px 650px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 500px 950px, #fff, transparent),
-                radial-gradient(1px 1px at 600px 750px, rgba(255,255,255,0.7), transparent),
-                radial-gradient(1px 1px at 700px 900px, #fff, transparent),
-                radial-gradient(1px 1px at 800px 600px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 900px 800px, #fff, transparent),
-                radial-gradient(1px 1px at 1000px 700px, rgba(255,255,255,0.7), transparent),
-                radial-gradient(1px 1px at 75px 325px, #fff, transparent),
-                radial-gradient(1px 1px at 175px 475px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 275px 275px, #fff, transparent),
-                radial-gradient(1px 1px at 375px 175px, rgba(255,255,255,0.7), transparent),
-                radial-gradient(1px 1px at 475px 575px, #fff, transparent),
-                radial-gradient(1px 1px at 575px 125px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 675px 375px, #fff, transparent),
-                radial-gradient(1px 1px at 775px 525px, rgba(255,255,255,0.7), transparent),
-                radial-gradient(1px 1px at 875px 225px, #fff, transparent),
-                radial-gradient(1px 1px at 975px 425px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 125px 825px, #fff, transparent),
-                radial-gradient(1px 1px at 225px 925px, rgba(255,255,255,0.7), transparent),
-                radial-gradient(1px 1px at 325px 725px, #fff, transparent),
-                radial-gradient(1px 1px at 425px 875px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 525px 775px, #fff, transparent),
-                radial-gradient(1px 1px at 625px 675px, rgba(255,255,255,0.7), transparent),
-                radial-gradient(1px 1px at 725px 975px, #fff, transparent),
-                radial-gradient(1px 1px at 825px 875px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 925px 575px, #fff, transparent),
-                radial-gradient(1px 1px at 25px 975px, rgba(255,255,255,0.7), transparent);
-            background-size: 1000px 1000px;
-            animation: drift 300s linear infinite;
-        }
-
-        .stars-mid {
-            background-image:
-                /* Medium stars - some colored */
-                radial-gradient(1.5px 1.5px at 80px 180px, #fff, transparent),
-                radial-gradient(1.5px 1.5px at 220px 320px, rgba(200,220,255,0.9), transparent),
-                radial-gradient(1.5px 1.5px at 380px 80px, #fff, transparent),
-                radial-gradient(1.5px 1.5px at 520px 480px, rgba(255,220,180,0.9), transparent),
-                radial-gradient(1.5px 1.5px at 680px 220px, #fff, transparent),
-                radial-gradient(1.5px 1.5px at 820px 380px, rgba(180,200,255,0.9), transparent),
-                radial-gradient(1.5px 1.5px at 920px 620px, #fff, transparent),
-                radial-gradient(1.5px 1.5px at 120px 720px, rgba(255,200,200,0.9), transparent),
-                radial-gradient(1.5px 1.5px at 280px 580px, #fff, transparent),
-                radial-gradient(1.5px 1.5px at 420px 920px, rgba(200,255,220,0.9), transparent),
-                radial-gradient(1.5px 1.5px at 580px 280px, #fff, transparent),
-                radial-gradient(1.5px 1.5px at 720px 820px, rgba(220,200,255,0.9), transparent),
-                radial-gradient(1.5px 1.5px at 880px 120px, #fff, transparent),
-                radial-gradient(1.5px 1.5px at 980px 480px, rgba(255,255,200,0.9), transparent),
-                radial-gradient(1.5px 1.5px at 180px 420px, #fff, transparent),
-                radial-gradient(1.5px 1.5px at 320px 180px, rgba(200,230,255,0.9), transparent),
-                radial-gradient(1.5px 1.5px at 480px 780px, #fff, transparent),
-                radial-gradient(1.5px 1.5px at 620px 520px, rgba(255,210,180,0.9), transparent),
-                radial-gradient(1.5px 1.5px at 780px 680px, #fff, transparent),
-                radial-gradient(1.5px 1.5px at 50px 850px, rgba(180,220,255,0.9), transparent);
-            background-size: 1000px 1000px;
-            animation: drift 200s linear infinite reverse;
-        }
-
-        .stars-close {
-            background-image:
-                /* Bright close stars with glow */
-                radial-gradient(2px 2px at 150px 300px, #fff, transparent),
-                radial-gradient(2.5px 2.5px at 350px 150px, rgba(150,200,255,1), transparent),
-                radial-gradient(2px 2px at 550px 550px, #fff, transparent),
-                radial-gradient(3px 3px at 750px 350px, rgba(255,200,150,1), transparent),
-                radial-gradient(2px 2px at 950px 750px, #fff, transparent),
-                radial-gradient(2.5px 2.5px at 250px 650px, rgba(200,150,255,1), transparent),
-                radial-gradient(2px 2px at 450px 450px, #fff, transparent),
-                radial-gradient(3px 3px at 650px 850px, rgba(150,255,200,1), transparent),
-                radial-gradient(2px 2px at 850px 50px, #fff, transparent),
-                radial-gradient(2.5px 2.5px at 50px 550px, rgba(255,255,150,1), transparent),
-                radial-gradient(2px 2px at 300px 900px, #fff, transparent),
-                radial-gradient(2.5px 2.5px at 500px 200px, rgba(150,220,255,1), transparent),
-                radial-gradient(2px 2px at 700px 600px, #fff, transparent),
-                radial-gradient(3px 3px at 900px 400px, rgba(255,180,180,1), transparent),
-                radial-gradient(2px 2px at 100px 100px, #fff, transparent),
-                radial-gradient(2.5px 2.5px at 400px 700px, rgba(180,255,220,1), transparent);
-            background-size: 1000px 1000px;
-            animation: drift 120s linear infinite;
-        }
-
-        /* Twinkling stars overlay */
-        .stars-twinkle {
-            background-image:
-                radial-gradient(2px 2px at 200px 400px, #fff, transparent),
-                radial-gradient(2px 2px at 600px 200px, #fff, transparent),
-                radial-gradient(2px 2px at 400px 800px, #fff, transparent),
-                radial-gradient(2px 2px at 800px 600px, #fff, transparent),
-                radial-gradient(2px 2px at 100px 700px, #fff, transparent),
-                radial-gradient(2px 2px at 900px 100px, #fff, transparent),
-                radial-gradient(2px 2px at 300px 500px, #fff, transparent),
-                radial-gradient(2px 2px at 700px 900px, #fff, transparent);
-            background-size: 1000px 1000px;
-            animation: twinkle 3s ease-in-out infinite;
-        }
-
-        @keyframes drift {
-            from { transform: translate(0, 0); }
-            to { transform: translate(-1000px, -1000px); }
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-
-        /* Black Hole - Realistic */
-        .blackhole-container {
-            position: fixed;
-            width: 300px;
-            height: 300px;
-            z-index: 1000;
+            inset: 0;
             pointer-events: none;
-            transform: translate(-50%, -50%);
         }
 
-        /* Event horizon - the actual black center */
-        .event-horizon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            background: #000;
-            border-radius: 50%;
-            box-shadow:
-                0 0 0 3px rgba(0,0,0,1),
-                0 0 0 8px rgba(0,0,0,0.95),
-                0 0 0 15px rgba(0,0,0,0.85),
-                0 0 0 25px rgba(0,0,0,0.7),
-                0 0 0 40px rgba(0,0,0,0.5),
-                0 0 80px 50px rgba(0,0,0,0.9);
-            z-index: 10;
-        }
-
-        /* Photon sphere - light bending ring */
-        .photon-sphere {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 200, 100, 0.8);
-            box-shadow:
-                0 0 20px 5px rgba(255, 150, 50, 0.6),
-                inset 0 0 20px 5px rgba(255, 100, 0, 0.3);
-            z-index: 9;
-        }
-
-        /* Accretion disk - horizontal view */
-        .accretion-disk {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotateX(80deg);
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            background: conic-gradient(
-                from 0deg,
-                rgba(255, 80, 0, 0.9) 0deg,
-                rgba(255, 150, 50, 1) 45deg,
-                rgba(255, 220, 150, 1) 90deg,
-                rgba(255, 255, 220, 1) 120deg,
-                rgba(255, 220, 150, 1) 150deg,
-                rgba(255, 150, 50, 1) 180deg,
-                rgba(255, 80, 0, 0.9) 210deg,
-                rgba(200, 50, 0, 0.8) 240deg,
-                rgba(150, 30, 0, 0.7) 270deg,
-                rgba(200, 50, 0, 0.8) 300deg,
-                rgba(255, 80, 0, 0.9) 360deg
-            );
-            mask: radial-gradient(circle, transparent 18%, black 22%, black 48%, transparent 52%);
-            -webkit-mask: radial-gradient(circle, transparent 18%, black 22%, black 48%, transparent 52%);
-            animation: disk-spin 8s linear infinite;
-            filter: blur(2px);
-            z-index: 5;
-        }
-
-        /* Second disk layer for depth */
-        .accretion-disk-inner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotateX(80deg);
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: conic-gradient(
-                from 180deg,
-                rgba(255, 200, 100, 0.8) 0deg,
-                rgba(255, 255, 200, 1) 60deg,
-                rgba(255, 200, 100, 0.8) 120deg,
-                rgba(255, 150, 50, 0.6) 180deg,
-                rgba(255, 100, 0, 0.4) 240deg,
-                rgba(255, 150, 50, 0.6) 300deg,
-                rgba(255, 200, 100, 0.8) 360deg
-            );
-            mask: radial-gradient(circle, transparent 25%, black 30%, black 45%, transparent 50%);
-            -webkit-mask: radial-gradient(circle, transparent 25%, black 30%, black 45%, transparent 50%);
-            animation: disk-spin 5s linear infinite reverse;
-            filter: blur(1px);
-            z-index: 6;
-        }
-
-        @keyframes disk-spin {
-            from { transform: translate(-50%, -50%) rotateX(80deg) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotateX(80deg) rotate(360deg); }
-        }
-
-        /* Gravitational lensing - the Einstein ring effect */
-        .einstein-ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 180, 100, 0.4);
-            box-shadow:
-                0 0 40px 15px rgba(255, 120, 50, 0.15),
-                0 0 80px 30px rgba(255, 80, 30, 0.1),
-                0 0 120px 50px rgba(255, 50, 0, 0.05);
-            z-index: 4;
-            animation: ring-pulse 3s ease-in-out infinite;
-        }
-
-        @keyframes ring-pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-            50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
-        }
-
-        /* Jet streams */
-        .jet {
-            position: absolute;
-            left: 50%;
+        .floating-text {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 3s ease;
             transform: translateX(-50%);
-            width: 4px;
-            background: linear-gradient(to top, rgba(100, 150, 255, 0.8), transparent);
-            filter: blur(2px);
-            z-index: 3;
+            white-space: nowrap;
         }
 
-        .jet-top {
-            top: -80px;
-            height: 60px;
-            animation: jet-flicker 0.5s ease-in-out infinite alternate;
+        .floating-text.visible {
+            opacity: 0.8;
         }
 
-        .jet-bottom {
-            bottom: -80px;
-            height: 60px;
-            background: linear-gradient(to bottom, rgba(100, 150, 255, 0.8), transparent);
-            animation: jet-flicker 0.5s ease-in-out infinite alternate-reverse;
+        .hidden {
+            opacity: 0 !important;
         }
 
-        @keyframes jet-flicker {
-            0% { opacity: 0.5; height: 50px; }
-            100% { opacity: 1; height: 70px; }
-        }
-
-        /* Debris particles spiraling in */
-        .debris {
-            position: absolute;
+        /* ===========================================
+           Custom Cursor
+           =========================================== */
+        .cursor {
+            position: fixed;
             width: 4px;
             height: 4px;
-            background: #fff;
+            background: #300;
             border-radius: 50%;
-            box-shadow: 0 0 6px 2px rgba(255, 200, 100, 0.8);
+            pointer-events: none;
+            z-index: var(--z-cursor);
+            transition: transform var(--transition-fast);
+            mix-blend-mode: difference;
         }
 
-        .debris:nth-child(1) { animation: spiral-in 3s linear infinite; }
-        .debris:nth-child(2) { animation: spiral-in 3s linear infinite 0.5s; }
-        .debris:nth-child(3) { animation: spiral-in 3s linear infinite 1s; }
-        .debris:nth-child(4) { animation: spiral-in 3s linear infinite 1.5s; }
-        .debris:nth-child(5) { animation: spiral-in 3s linear infinite 2s; }
-        .debris:nth-child(6) { animation: spiral-in 3s linear infinite 2.5s; }
-
-        @keyframes spiral-in {
-            0% {
-                transform: rotate(0deg) translateX(140px) rotate(0deg);
-                opacity: 0;
-            }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% {
-                transform: rotate(720deg) translateX(30px) rotate(-720deg);
-                opacity: 0;
-            }
+        .cursor.click {
+            transform: scale(3);
+            background: var(--color-glow);
         }
 
-        /* Distant planet */
-        .planet {
+        .cursor.bleeding::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, var(--color-blood) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: blood-drip-cursor 0.5s ease-out forwards;
+            pointer-events: none;
+        }
+
+        .blood-drop {
             position: fixed;
-            bottom: -200px;
-            right: -100px;
-            width: 500px;
-            height: 500px;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, var(--color-blood) 30%, var(--color-blood-dark) 100%);
             border-radius: 50%;
-            background:
-                radial-gradient(circle at 30% 30%, #2a4a6a 0%, #1a2a3a 40%, #0a1520 100%);
-            box-shadow:
-                inset -30px -30px 60px rgba(0,0,0,0.8),
-                inset 20px 20px 40px rgba(100,150,200,0.1),
-                0 0 100px rgba(0,100,150,0.2);
-            z-index: -8;
+            pointer-events: none;
+            z-index: calc(var(--z-cursor) - 1);
+            animation: blood-drop-fade 3s ease-out forwards;
+        }
+
+        @keyframes blood-drop-fade {
+            to {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+        }
+
+        /* ===========================================
+           Overlays
+           =========================================== */
+        .noise {
+            z-index: var(--z-ui);
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        .vignette {
+            z-index: var(--z-overlay);
+            background: radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
+            animation: vignette-breathe 6s ease-in-out infinite;
+        }
+
+        @keyframes vignette-breathe {
+            0%, 100% {
+                background: radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
+            }
+            50% {
+                background: radial-gradient(ellipse at center, transparent 0%, transparent 30%, rgba(0, 0, 0, 0.85) 100%);
+            }
+        }
+
+        .flash-overlay {
+            z-index: var(--z-effects);
+            background: #200;
+            opacity: 0;
+            transition: opacity 0.05s;
+        }
+
+        .flash-overlay.active {
+            opacity: 0.3;
+        }
+
+        /* ===========================================
+           Edge Darkness
+           =========================================== */
+        .edge-darkness {
+            position: fixed;
+            pointer-events: none;
+            z-index: 45;
+            background: var(--color-bg);
+            animation: edge-breathe 8s ease-in-out infinite;
+        }
+
+        .edge-darkness.left { inset: 0 auto 0 0; width: var(--edge-size); }
+        .edge-darkness.right { inset: 0 0 0 auto; width: var(--edge-size); }
+        .edge-darkness.top { inset: 0 0 auto 0; height: var(--edge-size); }
+        .edge-darkness.bottom { inset: auto 0 0 0; height: var(--edge-size); }
+
+        @keyframes edge-breathe {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 0.9; }
+        }
+
+        /* ===========================================
+           Blood Drip
+           =========================================== */
+        .drip {
+            position: fixed;
+            top: -50px;
+            width: 3px;
+            height: 0;
+            background: linear-gradient(to bottom, transparent, #711, #922);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 30;
+            box-shadow: 0 0 6px var(--color-glow);
+        }
+
+        .drip.active {
+            animation: drip-fall 4s ease-in forwards;
+        }
+
+        @keyframes drip-fall {
+            0% { height: 0; opacity: 0.6; top: -50px; }
+            70% { height: 150px; opacity: 0.4; }
+            100% { height: 200px; opacity: 0; top: 100%; }
+        }
+
+        /* ===========================================
+           Blood Handprint
+           =========================================== */
+        .blood-handprint {
+            position: fixed;
+            pointer-events: none;
+            z-index: var(--z-effects);
+            width: 80px;
+            height: auto;
+            opacity: 0;
+            filter: brightness(0.3) saturate(0.6);
+            animation:
+                handprint-appear var(--transition-fast) ease-out forwards,
+                handprint-fade 15s ease 1s forwards;
+        }
+
+        @keyframes handprint-appear {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 0.6; transform: scale(1); }
+        }
+
+        @keyframes handprint-fade {
+            to { opacity: 0; }
+        }
+
+        /* ===========================================
+           Glitch & Distortion Effects
+           =========================================== */
+        @keyframes glitch {
+            0% { transform: translate(0); filter: hue-rotate(0deg); }
+            10% { transform: translate(-5px, 3px); filter: hue-rotate(90deg); }
+            20% { transform: translate(3px, -3px); filter: hue-rotate(180deg); }
+            30% { transform: translate(-3px, 0); filter: hue-rotate(270deg); }
+            40% { transform: translate(5px, 2px); filter: hue-rotate(0deg); }
+            50% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 3px); clip-path: inset(30% 0 40% 0); }
+            70% { transform: translate(-3px, 0); clip-path: inset(50% 0 20% 0); }
+            80% { transform: translate(0, -3px); clip-path: none; }
+            90% { transform: translate(3px, 2px); }
+            100% { transform: translate(0); filter: none; }
+        }
+
+        body.glitch {
+            animation: glitch 0.3s ease forwards;
+        }
+
+        @keyframes distortion {
+            0%, 100% { filter: none; transform: none; }
+            20% { filter: blur(1px) brightness(0.9); transform: scale(1.005) skewX(0.3deg); }
+            40% { filter: blur(0.5px) brightness(1.1); transform: scale(0.995) skewY(-0.3deg); }
+            60% { filter: blur(1.5px) brightness(0.85); transform: scale(1.003) skewX(-0.2deg) translateX(2px); }
+            80% { filter: blur(0.8px) brightness(1.05); transform: scale(0.997) skewY(0.2deg) translateX(-2px); }
+        }
+
+        body.distort {
+            animation: distortion 0.5s ease forwards;
+        }
+
+        /* ===========================================
+           Main Button
+           =========================================== */
+        .container {
+            text-align: center;
+            z-index: var(--z-base);
+            transition: opacity var(--transition-slow) ease;
+            animation: heartbeat 4s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 20%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
+            5% { transform: scale(1.03); filter: drop-shadow(0 0 15px var(--color-blood)) drop-shadow(0 0 30px var(--color-blood-dark)); }
+            10% { transform: scale(1); filter: drop-shadow(0 0 5px var(--color-blood-dark)); }
+            15% { transform: scale(1.02); filter: drop-shadow(0 0 10px var(--color-blood)) drop-shadow(0 0 20px var(--color-blood-dark)); }
+        }
+
+        .container a {
+            color: inherit;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .text {
+            font-size: 1.1rem;
+            letter-spacing: 10px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            animation: fadeIn 3s ease-in 1s forwards;
+            color: var(--color-blood-light);
+            text-shadow: 0 0 20px var(--color-glow), 0 0 40px #300;
+            padding: 15px 30px;
+            border: 1px solid #322;
+            transition:
+                color var(--transition-normal) ease,
+                text-shadow var(--transition-normal) ease,
+                letter-spacing var(--transition-normal) ease,
+                border-color var(--transition-normal) ease;
+        }
+
+        .text:hover {
+            color: var(--color-blood-bright);
+            border-color: #433;
+            text-shadow: 0 0 25px #600, 0 0 50px #300;
+            letter-spacing: 14px;
+            cursor: pointer;
+        }
+
+        .text.hidden {
+            opacity: 0 !important;
+            transition: none;
+        }
+
+        .text.zalgo {
+            animation: zalgo-corrupt 3s ease-in-out infinite;
+        }
+
+        @keyframes zalgo-corrupt {
+            0%, 100% {
+                text-shadow: 0 0 20px var(--color-glow), 0 0 40px #300;
+                transform: none;
+                letter-spacing: 10px;
+                opacity: 0.9;
+            }
+            30% {
+                text-shadow: 0 0 25px var(--color-glow), 0 0 50px #200, -1px 0 #311;
+                transform: translateX(-1px);
+                letter-spacing: 11px;
+                opacity: 0.7;
+            }
+            50% {
+                text-shadow: 0 0 15px var(--color-glow), 0 0 35px #300, 1px 0 #422;
+                transform: translateX(1px) translateY(-1px);
+                letter-spacing: 9px;
+                opacity: 0.85;
+            }
+            70% {
+                text-shadow: 0 0 30px var(--color-glow), 0 0 45px #200;
+                transform: translateY(1px);
+                letter-spacing: 10px;
+                opacity: 0.75;
+            }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 0.9; }
+        }
+
+        /* ===========================================
+           Hidden Corner Messages
+           =========================================== */
+        .hidden-message {
+            position: fixed;
+            font-size: 1rem;
+            letter-spacing: 6px;
+            opacity: 0;
+            color: var(--color-text);
+            pointer-events: none;
+            transition: opacity 2s ease;
+            text-shadow: 0 0 12px #800;
+        }
+
+        .corner-tl { top: 30px; left: 30px; }
+        .corner-tr { top: 30px; right: 30px; }
+        .corner-bl { bottom: 30px; left: 30px; }
+        .corner-br { bottom: 30px; right: 30px; }
+
+        /* ===========================================
+           Floating Text Effects
+           =========================================== */
+        .incantation {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.2rem;
+            font-style: italic;
+            letter-spacing: 3px;
+            color: #666;
+            z-index: 12;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .incantation.visible {
             opacity: 0.6;
         }
 
-        .planet::after {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            right: -20px;
-            bottom: -20px;
-            border-radius: 50%;
-            background: transparent;
-            box-shadow: 0 0 80px 20px rgba(0, 150, 255, 0.1);
+        .creepy-text {
+            font-family: 'Paint', cursive;
+            font-size: 2.5rem;
+            color: #b33;
+            z-index: 13;
+            text-shadow: 0 0 10px #800, 0 0 20px #600, 0 0 30px #400;
+            transition: transform 2s ease-in, filter 2s ease-in, opacity 2s ease-in, letter-spacing 2s ease-in;
         }
 
-        /* HUD Frame */
-        .hud-frame {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            z-index: 100;
+        .creepy-text.visible {
+            opacity: 0.85;
         }
 
-        .hud-corner {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            border: 2px solid var(--accent-cyan);
-            opacity: 0.4;
-        }
-
-        .hud-corner.top-left {
-            top: 20px;
-            left: 20px;
-            border-right: none;
-            border-bottom: none;
-        }
-
-        .hud-corner.top-right {
-            top: 20px;
-            right: 20px;
-            border-left: none;
-            border-bottom: none;
-        }
-
-        .hud-corner.bottom-left {
-            bottom: 20px;
-            left: 20px;
-            border-right: none;
-            border-top: none;
-        }
-
-        .hud-corner.bottom-right {
-            bottom: 20px;
-            right: 20px;
-            border-left: none;
-            border-top: none;
-        }
-
-        /* Scan lines effect */
-        .scanlines {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0, 0, 0, 0.03) 2px,
-                rgba(0, 0, 0, 0.03) 4px
-            );
-            pointer-events: none;
-            z-index: 99;
-        }
-
-        /* Container */
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 80px 30px;
-            position: relative;
-        }
-
-        /* Header - Mission Control */
-        header {
-            text-align: center;
-            margin-bottom: 80px;
-        }
-
-        .mission-badge {
-            display: inline-block;
-            padding: 8px 20px;
-            border: 1px solid var(--accent-orange);
-            border-radius: 4px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.7rem;
-            letter-spacing: 4px;
-            color: var(--accent-orange);
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            animation: flicker 4s infinite;
-        }
-
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            92% { opacity: 1; }
-            93% { opacity: 0.8; }
-            94% { opacity: 1; }
-            96% { opacity: 0.9; }
-            97% { opacity: 1; }
-        }
-
-        .logo-container {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
-
-        .logo {
-            font-size: 5rem;
-            filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.5));
-        }
-
-        .logo-ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 120px;
-            height: 120px;
-            border: 2px solid var(--accent-cyan);
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: rotate 20s linear infinite;
-        }
-
-        .logo-ring::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: 50%;
-            width: 10px;
-            height: 10px;
-            background: var(--accent-cyan);
-            border-radius: 50%;
-            transform: translateX(-50%);
-        }
-
-        @keyframes rotate {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            background: linear-gradient(180deg, #fff 0%, var(--accent-cyan) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 16px;
-            text-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
-        }
-
-        .tagline {
-            font-size: 1rem;
-            color: var(--text-dim);
-            letter-spacing: 2px;
-            margin-bottom: 40px;
-        }
-
-        /* Command Input */
-        .command-panel {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-glow);
-            border-radius: 8px;
-            padding: 24px 32px;
-            display: inline-block;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .command-panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
-            border-radius: 8px 8px 0 0;
-        }
-
-        .command-panel:hover {
-            border-color: var(--accent-cyan);
-            box-shadow:
-                0 0 30px rgba(0, 212, 255, 0.2),
-                inset 0 0 30px rgba(0, 212, 255, 0.05);
-        }
-
-        .command-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.7rem;
-            color: var(--accent-green);
-            letter-spacing: 2px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            animation: pulse-dot 2s infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; box-shadow: 0 0 5px var(--accent-green); }
-            50% { opacity: 0.5; box-shadow: none; }
-        }
-
-        .command-text {
-            font-size: 1.1rem;
-            color: var(--text-bright);
-            font-family: 'Share Tech Mono', monospace;
-        }
-
-        .command-text .prompt {
-            color: var(--accent-orange);
-        }
-
-        /* Systems Grid */
-        .systems-section {
-            margin-bottom: 80px;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .section-line {
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, var(--border-glow), transparent);
-        }
-
-        .section-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
-            color: var(--accent-cyan);
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
-
-        .systems-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .system-card {
-            background: var(--panel-bg);
-            border: 1px solid rgba(0, 212, 255, 0.1);
-            border-radius: 8px;
-            padding: 28px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .system-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--accent-cyan);
+        /* Creepy text disappearance effects */
+        .creepy-text.melting {
+            transform: translateX(-50%) translateY(40px) scaleY(1.8);
+            filter: blur(4px);
             opacity: 0;
-            transition: opacity 0.3s ease;
         }
 
-        .system-card:hover {
-            border-color: var(--border-glow);
-            transform: translateX(5px);
+        .creepy-text.dissolve {
+            transform: translateX(-50%) scale(1.2);
+            filter: blur(8px) brightness(0.5);
+            opacity: 0;
+            letter-spacing: 15px;
         }
 
-        .system-card:hover::before {
-            opacity: 1;
+        .creepy-text.glitch-out {
+            animation: creepy-glitch-out 0.8s steps(4) forwards;
         }
 
-        .system-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
+        @keyframes creepy-glitch-out {
+            0% { opacity: 0.85; transform: translateX(-50%); }
+            25% { opacity: 0.6; transform: translateX(-48%) skewX(5deg); filter: blur(1px); }
+            50% { opacity: 0.4; transform: translateX(-52%) skewX(-8deg); filter: blur(2px); }
+            75% { opacity: 0.2; transform: translateX(-50%) skewX(3deg) scaleX(1.1); filter: blur(3px); }
+            100% { opacity: 0; transform: translateX(-50%) scaleY(0); filter: blur(5px); }
         }
 
-        .system-icon {
-            font-size: 1.5rem;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 8px;
+        .creepy-text.fade-out {
+            opacity: 0;
+            transform: translateX(-50%) scale(0.95);
         }
 
-        .system-name {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-bright);
-            letter-spacing: 1px;
+        /* ===========================================
+           Blood Writing Effect
+           =========================================== */
+        .blood-writing {
+            position: fixed;
+            pointer-events: none;
+            z-index: var(--z-effects);
+            opacity: 0;
+            transition: opacity 1s ease;
+            font-family: 'Paint', cursive;
+            font-size: 3rem;
+            color: #c33;
+            text-shadow: 0 0 10px #800, 0 0 20px #600, 0 0 30px #400;
+            white-space: nowrap;
+            overflow: visible;
         }
 
-        .system-status {
-            font-size: 0.7rem;
-            color: var(--accent-green);
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        .blood-writing.visible {
+            opacity: 0.9;
         }
 
-        .system-desc {
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            line-height: 1.7;
+        /* ===========================================
+           Click Hint
+           =========================================== */
+        .click-hint {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.6rem;
+            letter-spacing: 4px;
+            color: var(--color-hint);
+            pointer-events: none;
+            z-index: var(--z-ui);
+            animation: hint-pulse 3s ease-in-out infinite;
+            transition: opacity 1s ease;
         }
 
-        /* Tech Modules */
-        .modules-section {
-            margin-bottom: 60px;
+        .click-hint.hidden {
+            opacity: 0;
         }
 
-        .modules-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .module-badge {
-            background: rgba(0, 212, 255, 0.05);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 4px;
-            padding: 10px 18px;
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            letter-spacing: 1px;
-            transition: all 0.2s ease;
-        }
-
-        .module-badge:hover {
-            border-color: var(--accent-cyan);
-            color: var(--text-bright);
-            background: rgba(0, 212, 255, 0.1);
-        }
-
-        /* Terminal Display */
-        .terminal-display {
-            background: var(--hull-dark);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 60px;
-        }
-
-        .terminal-bar {
-            background: var(--hull-mid);
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
-        }
-
-        .terminal-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .terminal-btn {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .terminal-btn.close { background: #ff5f57; }
-        .terminal-btn.min { background: #febc2e; }
-        .terminal-btn.max { background: #28c840; }
-
-        .terminal-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.7rem;
-            color: var(--text-dim);
-            letter-spacing: 2px;
-        }
-
-        .terminal-body {
-            padding: 24px;
-            font-size: 0.9rem;
-            line-height: 2;
-        }
-
-        .terminal-line {
-            display: flex;
-            gap: 10px;
-        }
-
-        .terminal-prompt {
-            color: var(--accent-green);
-        }
-
-        .terminal-cmd {
-            color: var(--text-bright);
-        }
-
-        .terminal-output {
-            color: var(--text-dim);
-            padding-left: 24px;
-        }
-
-        .terminal-output.success {
-            color: var(--accent-green);
-        }
-
-        /* Action Buttons */
-        .actions {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 16px 32px;
-            border-radius: 4px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            text-decoration: none;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-        }
-
-        .action-btn.primary {
-            background: linear-gradient(135deg, var(--accent-cyan), #0088aa);
-            color: var(--space-black);
-            font-weight: 700;
-            border: none;
-        }
-
-        .action-btn.primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.4);
-        }
-
-        .action-btn.secondary {
-            background: transparent;
-            border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan);
-        }
-
-        .action-btn.secondary:hover {
-            background: rgba(0, 212, 255, 0.1);
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            margin-top: 100px;
-            padding-top: 40px;
-            border-top: 1px solid rgba(0, 212, 255, 0.1);
-        }
-
-        .footer-text {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            letter-spacing: 1px;
-        }
-
-        .footer-text a {
-            color: var(--accent-cyan);
-            text-decoration: none;
-        }
-
-        .footer-text a:hover {
-            text-decoration: underline;
-        }
-
-        .coordinates {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.65rem;
-            color: var(--text-dim);
-            opacity: 0.5;
-            margin-top: 15px;
-            letter-spacing: 2px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-                letter-spacing: 4px;
-            }
-
-            .logo {
-                font-size: 3.5rem;
-            }
-
-            .command-panel {
-                padding: 18px 24px;
-            }
-
-            .hud-corner {
-                width: 40px;
-                height: 40px;
-            }
-
-            .planet {
-                width: 300px;
-                height: 300px;
-                bottom: -150px;
-                right: -100px;
-            }
+        @keyframes hint-pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
         }
     </style>
 </head>
 <body>
-    <!-- Deep space background -->
-    <div class="space"></div>
-    <div class="stars-layer stars-far"></div>
-    <div class="stars-layer stars-mid"></div>
-    <div class="stars-layer stars-close"></div>
-    <div class="stars-layer stars-twinkle"></div>
-    <div class="planet"></div>
+    <!-- Cursor -->
+    <div class="cursor" id="cursor"></div>
 
-    <!-- Black Hole -->
-    <div class="blackhole-container" id="blackhole">
-        <div class="einstein-ring"></div>
-        <div class="jet jet-top"></div>
-        <div class="jet jet-bottom"></div>
-        <div class="accretion-disk"></div>
-        <div class="accretion-disk-inner"></div>
-        <div class="photon-sphere"></div>
-        <div class="event-horizon"></div>
-        <div class="debris"></div>
-        <div class="debris"></div>
-        <div class="debris"></div>
-        <div class="debris"></div>
-        <div class="debris"></div>
-        <div class="debris"></div>
+    <!-- Overlays -->
+    <div class="fixed-overlay noise"></div>
+    <div class="fixed-overlay vignette"></div>
+    <div class="fixed-overlay flash-overlay" id="flashOverlay"></div>
+
+    <!-- Edge Darkness -->
+    <div class="edge-darkness left"></div>
+    <div class="edge-darkness right"></div>
+    <div class="edge-darkness top"></div>
+    <div class="edge-darkness bottom"></div>
+
+    <!-- Blood Drips -->
+    <div class="drip" id="drip1"></div>
+    <div class="drip" id="drip2"></div>
+
+    <!-- Hidden Messages -->
+    <div class="hidden-message corner-tl" id="msg1">watching</div>
+    <div class="hidden-message corner-tr" id="msg2">always</div>
+    <div class="hidden-message corner-bl" id="msg3">waiting</div>
+    <div class="hidden-message corner-br" id="msg4">here</div>
+
+    <!-- Main Button -->
+    <div class="container" id="container">
+        <a href="https://github.com/Sbastien/dotfiles" id="button">
+            <p class="text" id="buttonText">source me</p>
+        </a>
     </div>
 
-    <!-- HUD Frame -->
-    <div class="hud-frame">
-        <div class="hud-corner top-left"></div>
-        <div class="hud-corner top-right"></div>
-        <div class="hud-corner bottom-left"></div>
-        <div class="hud-corner bottom-right"></div>
-    </div>
+    <!-- Click Hint -->
+    <div class="click-hint" id="clickHint">click anywhere</div>
 
-    <!-- Scanlines -->
-    <div class="scanlines"></div>
+    <!-- Blood Writing Effect -->
+    <div class="blood-writing" id="bloodWriting"></div>
 
-    <div class="container">
-        <header>
-            <div class="mission-badge">Mission Control v1.0</div>
+    <!-- Floating Text Effects -->
+    <div class="floating-text incantation" id="incant1"></div>
+    <div class="floating-text incantation" id="incant2"></div>
+    <div class="floating-text creepy-text" id="creepy1"></div>
+    <div class="floating-text creepy-text" id="creepy2"></div>
 
-            <div class="logo-container">
-                <div class="logo-ring"></div>
-                <div class="logo">🚀</div>
-            </div>
-
-            <h1>Dotfiles</h1>
-            <p class="tagline">Modern macOS development environment • Managed with chezmoi</p>
-
-            <div class="command-panel" onclick="navigator.clipboard.writeText('chezmoi init --apply Sbastien')">
-                <div class="command-label">
-                    <span class="status-dot"></span>
-                    Deploy Command
-                </div>
-                <div class="command-text">
-                    <span class="prompt">$</span> chezmoi init --apply Sbastien
-                </div>
-            </div>
-        </header>
-
-        <section class="systems-section">
-            <div class="section-header">
-                <span class="section-line"></span>
-                <h2 class="section-title">Onboard Systems</h2>
-                <span class="section-line" style="background: linear-gradient(270deg, var(--border-glow), transparent);"></span>
-            </div>
-
-            <div class="systems-grid">
-                <div class="system-card">
-                    <div class="system-header">
-                        <div class="system-icon">🐚</div>
-                        <div>
-                            <div class="system-name">Shell Core</div>
-                            <div class="system-status">● Online</div>
-                        </div>
-                    </div>
-                    <p class="system-desc">Zsh + Oh My Zsh with syntax highlighting, autosuggestions, and intelligent completions.</p>
-                </div>
-
-                <div class="system-card">
-                    <div class="system-header">
-                        <div class="system-icon">⭐</div>
-                        <div>
-                            <div class="system-name">Navigation HUD</div>
-                            <div class="system-status">● Online</div>
-                        </div>
-                    </div>
-                    <p class="system-desc">Starship prompt displaying git status, runtime versions, and system metrics in real-time.</p>
-                </div>
-
-                <div class="system-card">
-                    <div class="system-header">
-                        <div class="system-icon">🔧</div>
-                        <div>
-                            <div class="system-name">Tool Array</div>
-                            <div class="system-status">● Online</div>
-                        </div>
-                    </div>
-                    <p class="system-desc">bat, eza, fd, ripgrep, fzf, btop — next-gen alternatives to classic Unix utilities.</p>
-                </div>
-
-                <div class="system-card">
-                    <div class="system-header">
-                        <div class="system-icon">📦</div>
-                        <div>
-                            <div class="system-name">Config Sync</div>
-                            <div class="system-status">● Online</div>
-                        </div>
-                    </div>
-                    <p class="system-desc">Chezmoi-managed dotfiles with templates, encryption, and cross-machine synchronization.</p>
-                </div>
-
-                <div class="system-card">
-                    <div class="system-header">
-                        <div class="system-icon">🍎</div>
-                        <div>
-                            <div class="system-name">OS Interface</div>
-                            <div class="system-status">● Online</div>
-                        </div>
-                    </div>
-                    <p class="system-desc">Automated macOS defaults — Dock, Finder, keyboard, trackpad, and security settings.</p>
-                </div>
-
-                <div class="system-card">
-                    <div class="system-header">
-                        <div class="system-icon">⚡</div>
-                        <div>
-                            <div class="system-name">Quick Deploy</div>
-                            <div class="system-status">● Ready</div>
-                        </div>
-                    </div>
-                    <p class="system-desc">One command to configure a new Mac. Full environment ready in minutes.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="modules-section">
-            <div class="section-header">
-                <span class="section-line"></span>
-                <h2 class="section-title">Loaded Modules</h2>
-                <span class="section-line" style="background: linear-gradient(270deg, var(--border-glow), transparent);"></span>
-            </div>
-
-            <div class="modules-grid">
-                <span class="module-badge">Zsh</span>
-                <span class="module-badge">Oh My Zsh</span>
-                <span class="module-badge">Starship</span>
-                <span class="module-badge">Neovim</span>
-                <span class="module-badge">Git + Delta</span>
-                <span class="module-badge">mise</span>
-                <span class="module-badge">Homebrew</span>
-                <span class="module-badge">chezmoi</span>
-            </div>
-        </section>
-
-        <div class="terminal-display">
-            <div class="terminal-bar">
-                <div class="terminal-controls">
-                    <span class="terminal-btn close"></span>
-                    <span class="terminal-btn min"></span>
-                    <span class="terminal-btn max"></span>
-                </div>
-                <span class="terminal-title">Bridge Terminal — zsh</span>
-                <span></span>
-            </div>
-            <div class="terminal-body">
-                <div class="terminal-line">
-                    <span class="terminal-prompt">❯</span>
-                    <span class="terminal-cmd">update</span>
-                </div>
-                <div class="terminal-output">🍺 Updating Homebrew...</div>
-                <div class="terminal-output">📝 Syncing Neovim plugins...</div>
-                <div class="terminal-output">⚙️ Updating dotfiles...</div>
-                <div class="terminal-output success">✅ All systems updated!</div>
-            </div>
-        </div>
-
-        <div class="actions">
-            <a href="https://github.com/Sbastien/dotfiles" class="action-btn primary">
-                View Source
-            </a>
-            <a href="https://github.com/Sbastien/Brewfile" class="action-btn secondary">
-                Brewfile
-            </a>
-        </div>
-
-        <footer>
-            <p class="footer-text">Engineered by <a href="https://github.com/Sbastien">Sbastien</a></p>
-            <p class="coordinates">LAT 48.8566° N • LON 2.3522° E • ALT ∞</p>
-        </footer>
-    </div>
+    <!-- Audio -->
+    <audio id="ambientSound" loop preload="auto">
+        <source src="whispers.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="crySound1" preload="auto">
+        <source src="cry-woman.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="crySound2" preload="auto">
+        <source src="cry-baby.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
-        // Black Hole with gravitational distortion effect
-        const blackhole = document.getElementById('blackhole');
-        const container = document.querySelector('.container');
+    /**
+     * Horror Effects Library
+     * Modular system for creating horror-themed web experiences
+     */
+    (() => {
+        'use strict';
 
-        // Black hole path - smooth curved trajectory
-        let time = 0;
-        const speed = 0.0003;
+        // =============================================
+        // CONFIGURATION
+        // =============================================
+        const CONFIG = {
+            // Button behavior
+            button: {
+                maxClicks: 3,
+                texts: ['dont leave', 'let me out'],  // After clicks 0 and 1; click 2 redirects
+                teaserTexts: [
+                    // Incitation technique
+                    'source me', 'execute me', 'run me', 'init me',
+                    // Mystère
+                    'i hold secrets', 'configs within', 'hidden paths',
+                    // Incitation douce
+                    'come closer', 'just one click', 'trust the shell'
+                ],
+                effects: [
+                    { sound: 0, glitch: true, flash: false },
+                    { sound: 1, glitch: true, flash: true },
+                    { sound: 'random', glitch: true, flash: true }
+                ]
+            },
 
-        // Get all elements that can be affected
-        const affectedElements = document.querySelectorAll(
-            '.system-card, .module-badge, .command-panel, .terminal-display, ' +
-            '.action-btn, h1, .tagline, .logo, .mission-badge, .section-title, ' +
-            '.footer-text, .coordinates'
-        );
+            // Audio volumes
+            audio: {
+                ambient: 0.15,
+                cry: 0.4
+            },
 
-        function updateBlackHole() {
-            time += speed;
+            // Effect timing (ms)
+            timing: {
+                drip: { interval: 6000, probability: 0.4, initialDelay: 1000 },
+                incantation: {
+                    initialDelay: { min: 3000, max: 5000 },
+                    interval: { min: 10000, max: 18000 },
+                    duration: { min: 8000, extra: 5000 }
+                },
+                creepyText: {
+                    initialDelay: { min: 2000, max: 5000 },
+                    interval: { min: 12000, max: 25000 },
+                    cooldown: 8000, // Minimum time between two creepy texts
+                    duration: { min: 5000, extra: 3000 }
+                },
+                glitch: { interval: 8000, probability: 0.3, initialDelay: 2500 },
+                distortion: { interval: 6000, probability: 0.4, initialDelay: 4000 },
+                zalgo: { interval: 8000, probability: 0.5, initialDelay: 5000, duration: 5000 },
+                teaser: { interval: 12000, probability: 0.4, initialDelay: 6000, duration: 3000 },
+                bloodWriting: { interval: 15000, probability: 0.35, initialDelay: 8000, letterDelay: 120, holdDuration: 4000 }
+            },
 
-            // Lissajous curve for interesting movement
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-            const radiusX = window.innerWidth * 0.4;
-            const radiusY = window.innerHeight * 0.35;
+            // Content
+            content: {
+                bloodWritingPhrases: [
+                    'you are not alone', 'come play with me', 'never leave', 'join us',
+                    'we see you', 'its too late now', 'no escape', 'stay forever'
+                ],
+                incantations: [
+                    "ph'nglui mglw'nafh", 'ia ia cthulhu fhtagn', 'tekeli-li tekeli-li',
+                    'exsuscita ex mortuis', 'aperire portas inferni', 'sanguis bibimus',
+                    'zazas zazas nasatanada zazas', 'veni omnipotens aeterne diabolus'
+                ],
+                creepyTexts: [
+                    // Présence
+                    'behind you', 'im here', 'found you', 'i see you', 'not alone',
+                    // Urgence
+                    'run', 'too late', 'dont move', 'stay still', 'dont blink',
+                    // Intimité dérangeante
+                    'i know you', 'i remember', 'you forgot me', 'we met before',
+                    // Ambiguïté
+                    'look closer', 'can you hear it', 'do you feel it', 'almost there',
+                    // Menace sourde
+                    'not yet', 'soon', 'patience', 'wait for me', 'your turn'
+                ],
+                handprints: ['bloody-handprint-1.png', 'bloody-handprint-2.png', 'bloody-handprint-3.png']
+            },
 
-            const x = centerX + Math.sin(time * 2.3) * radiusX;
-            const y = centerY + Math.sin(time * 1.7) * radiusY;
+            // Layout
+            layout: {
+                edgeMarginPercent: 0.25,
+                textBuffer: 20,
+                buttonRepositionPadding: 50
+            }
+        };
 
-            blackhole.style.left = x + 'px';
-            blackhole.style.top = y + 'px';
+        // =============================================
+        // UTILITIES
+        // =============================================
+        const $ = (id) => document.getElementById(id);
 
-            // Apply gravitational distortion to elements
-            affectedElements.forEach(el => {
-                const rect = el.getBoundingClientRect();
-                const elCenterX = rect.left + rect.width / 2;
-                const elCenterY = rect.top + rect.height / 2;
+        const randomPick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-                const dx = x - elCenterX;
-                const dy = y - elCenterY;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+        const randomRange = (min, max) => Math.random() * (max - min) + min;
 
-                const maxEffect = 250; // Distance at which effect starts
-                const minDistance = 80; // Event horizon - maximum pull
+        const chance = (probability) => Math.random() < probability;
 
-                if (distance < maxEffect) {
-                    // Calculate pull strength (stronger when closer)
-                    const strength = Math.pow((maxEffect - distance) / maxEffect, 2);
-                    const pullStrength = strength * 60; // Max pixels to pull
+        const tempClass = (element, className, duration) => {
+            element.classList.add(className);
+            setTimeout(() => element.classList.remove(className), duration);
+        };
 
-                    // Direction toward black hole
-                    const angle = Math.atan2(dy, dx);
-                    const pullX = Math.cos(angle) * pullStrength;
-                    const pullY = Math.sin(angle) * pullStrength;
+        const createElement = (tag, className, styles = {}) => {
+            const el = document.createElement(tag);
+            if (className) el.className = className;
+            Object.assign(el.style, styles);
+            return el;
+        };
 
-                    // Scale effect (shrink as it gets closer)
-                    const scale = 1 - (strength * 0.3);
+        const forceReflow = (element) => void element.offsetWidth;
 
-                    // Rotation effect (spiral)
-                    const rotation = strength * 15;
+        const getElementCenter = (element) => {
+            const rect = element.getBoundingClientRect();
+            return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        };
 
-                    // Opacity (fade as it gets very close)
-                    const opacity = distance < minDistance ?
-                        Math.max(0, distance / minDistance) : 1;
+        // =============================================
+        // POSITION CALCULATOR
+        // =============================================
+        const Position = {
+            /**
+             * Calculate safe position avoiding edges and optionally a center point
+             * @param {Object} options
+             * @param {number} options.textWidth - Width of text to position (for edge calculation)
+             * @param {Object} options.avoidCenter - Point to avoid { x, y }
+             * @param {number} options.centerMargin - Minimum distance from avoidCenter
+             */
+            getSafe({ textWidth = 0, avoidCenter = null, centerMargin = 100 } = {}) {
+                const { edgeMarginPercent, textBuffer } = CONFIG.layout;
+                const { innerWidth: vw, innerHeight: vh } = window;
 
-                    // Stretch effect toward black hole
-                    const stretchX = 1 + (strength * 0.2 * Math.abs(Math.cos(angle)));
-                    const stretchY = 1 + (strength * 0.2 * Math.abs(Math.sin(angle)));
+                const verticalMargin = vh * edgeMarginPercent;
+                const horizontalMargin = Math.max(textWidth / 2 + textBuffer, vw * edgeMarginPercent);
 
-                    el.style.transform = `
-                        translate(${pullX}px, ${pullY}px)
-                        scale(${scale * stretchX}, ${scale * stretchY})
-                        rotate(${rotation}deg)
-                    `;
-                    el.style.opacity = opacity;
-                    el.style.filter = `blur(${strength * 2}px)`;
-                    el.style.transition = 'none';
-                } else {
-                    // Reset when far away
-                    el.style.transform = '';
-                    el.style.opacity = '';
-                    el.style.filter = '';
-                    el.style.transition = 'all 0.5s ease-out';
+                const bounds = {
+                    minX: horizontalMargin,
+                    maxX: vw - horizontalMargin,
+                    minY: verticalMargin,
+                    maxY: vh - verticalMargin
+                };
+
+                let x, y, attempts = 0;
+                const maxAttempts = 20;
+
+                do {
+                    x = randomRange(bounds.minX, bounds.maxX);
+                    y = randomRange(bounds.minY, bounds.maxY);
+                    attempts++;
+                } while (
+                    avoidCenter &&
+                    attempts < maxAttempts &&
+                    Math.abs(x - avoidCenter.x) < centerMargin &&
+                    Math.abs(y - avoidCenter.y) < centerMargin
+                );
+
+                return { x, y };
+            },
+
+            toPercent(pos) {
+                return {
+                    x: `${(pos.x / window.innerWidth) * 100}%`,
+                    y: `${(pos.y / window.innerHeight) * 100}%`
+                };
+            }
+        };
+
+        // =============================================
+        // TYPEWRITER
+        // =============================================
+        const Typewriter = {
+            type(element, text, delay = 150, onComplete = null) {
+                element.textContent = '';
+                let index = 0;
+
+                const intervalId = setInterval(() => {
+                    if (index < text.length) {
+                        element.textContent += text[index++];
+                    } else {
+                        clearInterval(intervalId);
+                        onComplete?.();
+                    }
+                }, delay);
+
+                return {
+                    stop: () => clearInterval(intervalId),
+                    duration: text.length * delay
+                };
+            },
+
+            erase(element, delay = 100, onComplete = null) {
+                let length = element.textContent.length;
+
+                const intervalId = setInterval(() => {
+                    if (length > 0) {
+                        element.textContent = element.textContent.slice(0, --length);
+                    } else {
+                        clearInterval(intervalId);
+                        onComplete?.();
+                    }
+                }, delay);
+
+                return {
+                    stop: () => clearInterval(intervalId),
+                    duration: length * delay
+                };
+            }
+        };
+
+        // =============================================
+        // AUDIO MANAGER
+        // =============================================
+        const AudioManager = {
+            sounds: new Map(),
+            ambientStarted: false,
+
+            register(name, element, volume) {
+                this.sounds.set(name, { element, volume });
+            },
+
+            play(name, options = {}) {
+                const sound = this.sounds.get(name);
+                if (!sound) return null;
+
+                const { element, volume } = sound;
+                element.currentTime = options.startTime || 0;
+                element.volume = options.volume ?? volume;
+                element.play().catch(() => {});
+                return element;
+            },
+
+            startAmbient(name) {
+                if (this.ambientStarted) return false;
+                this.ambientStarted = true;
+
+                const result = this.play(name);
+                if (!result) this.ambientStarted = false;
+                return !!result;
+            }
+        };
+
+        // =============================================
+        // EFFECT SCHEDULER
+        // =============================================
+        const Scheduler = {
+            intervals: [],
+            timeouts: [],
+
+            /** Fixed interval scheduling with probability */
+            add(callback, interval, probability = 1, initialDelay = null) {
+                if (initialDelay !== null) {
+                    const t = setTimeout(() => {
+                        if (chance(probability)) callback();
+                    }, initialDelay);
+                    this.timeouts.push(t);
                 }
+
+                const id = setInterval(() => {
+                    if (chance(probability)) callback();
+                }, interval);
+
+                this.intervals.push(id);
+                return id;
+            },
+
+            /** Random interval scheduling (recursive setTimeout) */
+            addRandom(callback, intervalRange, initialDelayRange = null) {
+                const scheduleNext = () => {
+                    const delay = randomRange(intervalRange.min, intervalRange.max);
+                    const t = setTimeout(() => {
+                        callback();
+                        scheduleNext();
+                    }, delay);
+                    this.timeouts.push(t);
+                };
+
+                if (initialDelayRange) {
+                    const initDelay = randomRange(initialDelayRange.min, initialDelayRange.max);
+                    const t = setTimeout(() => {
+                        callback();
+                        scheduleNext();
+                    }, initDelay);
+                    this.timeouts.push(t);
+                } else {
+                    scheduleNext();
+                }
+            },
+
+            clear() {
+                this.intervals.forEach(clearInterval);
+                this.timeouts.forEach(clearTimeout);
+                this.intervals = [];
+                this.timeouts = [];
+            }
+        };
+
+        // =============================================
+        // FLOATING TEXT
+        // =============================================
+        const FloatingText = {
+            activeCount: 0,
+            maxActive: 3,
+            disappearEffects: ['melting', 'dissolve', 'glitch-out', 'fade-out'],
+            lastCreepyTime: 0, // Track last creepy text appearance
+
+            measureText(element, text) {
+                const original = {
+                    textContent: element.textContent,
+                    visibility: element.style.visibility
+                };
+
+                element.textContent = text;
+                element.style.visibility = 'hidden';
+                element.classList.add('visible');
+
+                const width = element.offsetWidth;
+
+                element.classList.remove('visible');
+                element.style.visibility = original.visibility;
+                element.textContent = original.textContent;
+
+                return width;
+            },
+
+            show(element, content, options = {}) {
+                const {
+                    duration = 4000,
+                    centerMargin = 100,
+                    typewriterDelay = 120,
+                    eraseDelay = 80,
+                    avoidElement = null,
+                    useSpecialDisappear = false,
+                    effectDuration = 2000,
+                    cooldown = 0
+                } = options;
+
+                if (this.activeCount >= this.maxActive) return false;
+
+                // Check cooldown for creepy texts
+                if (cooldown > 0) {
+                    const now = Date.now();
+                    if (now - this.lastCreepyTime < cooldown) return false;
+                    this.lastCreepyTime = now;
+                }
+
+                this.activeCount++;
+
+                // Measure and position
+                const textWidth = this.measureText(element, content);
+                const avoidCenter = avoidElement ? getElementCenter(avoidElement) : null;
+                const pos = Position.getSafe({ textWidth, avoidCenter, centerMargin });
+
+                // Reset element state
+                element.style.left = `${pos.x}px`;
+                element.style.top = `${pos.y}px`;
+                element.textContent = '';
+                this.disappearEffects.forEach(cls => element.classList.remove(cls));
+                element.classList.add('visible');
+
+                // Type the text
+                const tw = Typewriter.type(element, content, typewriterDelay);
+
+                // Schedule disappearance
+                setTimeout(() => {
+                    if (useSpecialDisappear) {
+                        const effect = randomPick(this.disappearEffects);
+                        element.classList.add(effect);
+                        setTimeout(() => {
+                            element.classList.remove('visible', effect);
+                            this.activeCount--;
+                        }, effectDuration);
+                    } else {
+                        Typewriter.erase(element, eraseDelay, () => {
+                            element.classList.remove('visible');
+                            this.activeCount--;
+                        });
+                    }
+                }, tw.duration + duration);
+
+                return true;
+            }
+        };
+
+        // =============================================
+        // CUSTOM CURSOR
+        // =============================================
+        const CustomCursor = {
+            element: null,
+            position: { x: 0, y: 0 },
+            bleeding: false,
+
+            init(element) {
+                this.element = element;
+                document.addEventListener('mousemove', (e) => this.handleMove(e));
+                document.addEventListener('mousedown', () => this.handleClick(true));
+                document.addEventListener('mouseup', () => this.handleClick(false));
+            },
+
+            handleMove(e) {
+                this.position = { x: e.clientX, y: e.clientY };
+                this.element.style.left = `${e.clientX - 2}px`;
+                this.element.style.top = `${e.clientY - 2}px`;
+            },
+
+            handleClick(isDown) {
+                this.element.classList.toggle('click', isDown);
+            },
+
+            startBleeding(duration = 15000, dropInterval = 80) {
+                if (this.bleeding) return;
+                this.bleeding = true;
+                this.element.classList.add('bleeding');
+
+                const intervalId = setInterval(() => {
+                    if (!this.bleeding) {
+                        clearInterval(intervalId);
+                        return;
+                    }
+                    this.createBloodDrop();
+                }, dropInterval);
+
+                setTimeout(() => {
+                    this.bleeding = false;
+                    this.element.classList.remove('bleeding');
+                }, duration);
+            },
+
+            createBloodDrop() {
+                const drop = createElement('div', 'blood-drop', {
+                    left: `${this.position.x + randomRange(-5, 5)}px`,
+                    top: `${this.position.y + randomRange(-5, 5)}px`
+                });
+                document.body.appendChild(drop);
+                setTimeout(() => drop.remove(), 3000);
+            }
+        };
+
+        // =============================================
+        // VISUAL EFFECTS
+        // =============================================
+        const VisualEffects = {
+            glitch: (duration = 300) => tempClass(document.body, 'glitch', duration),
+
+            distortion: (duration = 400) => tempClass(document.body, 'distort', duration),
+
+            flash: (element, duration = 80) => tempClass(element, 'active', duration),
+
+            drip(dripElements) {
+                const drip = randomPick(dripElements);
+                drip.style.left = `${Math.random() * 100}%`;
+                drip.classList.remove('active');
+                forceReflow(drip);
+                drip.classList.add('active');
+            },
+
+            handprint(x, y, images, duration = 16000) {
+                const img = createElement('img', 'blood-handprint', {
+                    left: `${x - 40}px`,
+                    top: `${y - 50}px`,
+                    transform: `rotate(${randomRange(-30, 30)}deg) scaleX(${chance(0.5) ? 1 : -1})`
+                });
+                img.src = randomPick(images);
+                document.body.appendChild(img);
+                setTimeout(() => img.remove(), duration);
+            }
+        };
+
+        // =============================================
+        // BLOOD WRITING
+        // =============================================
+        const BloodWriting = {
+            element: null,
+            phrases: [],
+            active: false,
+
+            init(element, phrases) {
+                this.element = element;
+                this.phrases = phrases;
+            },
+
+            show(options = {}) {
+                if (this.active) return;
+
+                const {
+                    letterDelay = 120,
+                    eraseDelay = 80,
+                    holdDuration = 4000,
+                    avoidElement = null,
+                    centerMargin = 300
+                } = options;
+
+                this.active = true;
+                const phrase = randomPick(this.phrases);
+
+                const avoidCenter = avoidElement ? getElementCenter(avoidElement) : null;
+                const pos = Position.toPercent(Position.getSafe({ avoidCenter, centerMargin }));
+
+                this.element.style.left = pos.x;
+                this.element.style.top = pos.y;
+                this.element.textContent = '';
+                this.element.classList.add('visible');
+
+                const tw = Typewriter.type(this.element, phrase, letterDelay);
+
+                setTimeout(() => {
+                    Typewriter.erase(this.element, eraseDelay, () => {
+                        this.element.classList.remove('visible');
+                        this.active = false;
+                    });
+                }, tw.duration + holdDuration);
+            }
+        };
+
+        // =============================================
+        // BUTTON TEASER
+        // =============================================
+        const ButtonTeaser = {
+            element: null,
+            originalText: '',
+            teaserTexts: [],
+            active: false,
+            clicked: false,
+
+            init(element, teaserTexts) {
+                this.element = element;
+                this.originalText = element.textContent;
+                this.teaserTexts = teaserTexts;
+            },
+
+            show(duration = 4000) {
+                if (this.active || this.clicked || this.element.classList.contains('hidden')) return;
+
+                this.active = true;
+                this.element.textContent = randomPick(this.teaserTexts);
+
+                setTimeout(() => {
+                    if (!this.clicked && !this.element.classList.contains('hidden')) {
+                        this.element.textContent = this.originalText;
+                    }
+                    this.active = false;
+                }, duration);
+            },
+
+            markClicked() {
+                this.clicked = true;
+            }
+        };
+
+        // =============================================
+        // DOM ELEMENTS
+        // =============================================
+        const elements = {
+            cursor: $('cursor'),
+            container: $('container'),
+            button: $('button'),
+            buttonText: $('buttonText'),
+            flashOverlay: $('flashOverlay'),
+            clickHint: $('clickHint'),
+            ambientSound: $('ambientSound'),
+            crySounds: [$('crySound1'), $('crySound2')],
+            drips: [$('drip1'), $('drip2')],
+            messages: [$('msg1'), $('msg2'), $('msg3'), $('msg4')],
+            incantations: [$('incant1'), $('incant2')],
+            creepyTexts: [$('creepy1'), $('creepy2')],
+            bloodWriting: $('bloodWriting')
+        };
+
+        // =============================================
+        // APPLICATION STATE
+        // =============================================
+        const state = { clickCount: 0 };
+
+        // =============================================
+        // EVENT HANDLERS
+        // =============================================
+        const handleFirstInteraction = () => {
+            AudioManager.startAmbient('ambient');
+            elements.clickHint.classList.add('hidden');
+        };
+
+        const handleMouseMove = () => {
+            if (chance(0.01)) {
+                const msg = randomPick(elements.messages);
+                msg.style.opacity = '0.4';
+                setTimeout(() => (msg.style.opacity = '0'), 2000);
+            }
+        };
+
+        const handleButtonClick = (e) => {
+            if (state.clickCount >= CONFIG.button.maxClicks) return;
+
+            e.preventDefault();
+            ButtonTeaser.markClicked();
+
+            // Hide button immediately
+            elements.buttonText.classList.add('hidden');
+            elements.container.style.pointerEvents = 'none';
+
+            const effect = CONFIG.button.effects[state.clickCount];
+            const currentClick = state.clickCount;
+            state.clickCount++;
+
+            // Apply visual effects
+            VisualEffects.handprint(e.clientX, e.clientY, CONFIG.content.handprints);
+            CustomCursor.startBleeding();
+            if (effect.glitch) VisualEffects.glitch();
+            if (effect.flash) setTimeout(() => VisualEffects.flash(elements.flashOverlay), 150);
+
+            // Play cry sound
+            const soundIndex = effect.sound === 'random'
+                ? Math.floor(Math.random() * elements.crySounds.length)
+                : effect.sound;
+            const sound = AudioManager.play(`cry${soundIndex}`);
+
+            // Handle post-sound action (reposition or redirect)
+            let handled = false;
+            const onSoundComplete = () => {
+                if (handled) return;
+                handled = true;
+
+                // Final click: redirect to GitHub
+                if (state.clickCount >= CONFIG.button.maxClicks) {
+                    window.location.href = elements.button.href;
+                    return;
+                }
+
+                // Reposition button with new text
+                const padding = CONFIG.layout.buttonRepositionPadding;
+                Object.assign(elements.container.style, {
+                    position: 'fixed',
+                    left: `${randomRange(padding, window.innerWidth - elements.container.offsetWidth - padding)}px`,
+                    top: `${randomRange(padding, window.innerHeight - elements.container.offsetHeight - padding)}px`,
+                    transform: 'none',
+                    pointerEvents: 'auto'
+                });
+
+                elements.buttonText.textContent = CONFIG.button.texts[currentClick];
+                elements.buttonText.classList.remove('hidden');
+                elements.buttonText.style.opacity = '0.9';
+            };
+
+            if (sound) {
+                sound.onended = onSoundComplete;
+                // Fallback: sound.duration is in seconds
+                const fallbackMs = sound.duration > 0 ? (sound.duration * 1000) + 500 : 8000;
+                setTimeout(onSoundComplete, fallbackMs);
+            } else {
+                setTimeout(onSoundComplete, 2000);
+            }
+        };
+
+        const handleZalgo = () => {
+            if (state.clickCount >= CONFIG.button.maxClicks) return;
+            tempClass(elements.buttonText, 'zalgo', CONFIG.timing.zalgo.duration);
+        };
+
+        // =============================================
+        // EFFECT SCHEDULING
+        // =============================================
+        const scheduleEffects = () => {
+            const { timing, content } = CONFIG;
+
+            // Blood drips (fixed interval)
+            Scheduler.add(
+                () => VisualEffects.drip(elements.drips),
+                timing.drip.interval,
+                timing.drip.probability,
+                timing.drip.initialDelay
+            );
+
+            // Incantations (random intervals, mystical gray text)
+            Scheduler.addRandom(
+                () => FloatingText.show(
+                    randomPick(elements.incantations),
+                    randomPick(content.incantations),
+                    {
+                        duration: timing.incantation.duration.min + Math.random() * timing.incantation.duration.extra,
+                        centerMargin: 120,
+                        avoidElement: elements.container,
+                        useSpecialDisappear: false
+                    }
+                ),
+                timing.incantation.interval,
+                timing.incantation.initialDelay
+            );
+
+            // Creepy texts (random intervals with cooldown, bloody Paint font)
+            Scheduler.addRandom(
+                () => FloatingText.show(
+                    randomPick(elements.creepyTexts),
+                    randomPick(content.creepyTexts),
+                    {
+                        duration: timing.creepyText.duration.min + Math.random() * timing.creepyText.duration.extra,
+                        centerMargin: 150,
+                        avoidElement: elements.container,
+                        useSpecialDisappear: true,
+                        effectDuration: 2000,
+                        cooldown: timing.creepyText.cooldown
+                    }
+                ),
+                timing.creepyText.interval,
+                timing.creepyText.initialDelay
+            );
+
+            // Visual glitches
+            Scheduler.add(
+                () => VisualEffects.glitch(),
+                timing.glitch.interval,
+                timing.glitch.probability,
+                timing.glitch.initialDelay
+            );
+
+            Scheduler.add(
+                () => VisualEffects.distortion(),
+                timing.distortion.interval,
+                timing.distortion.probability,
+                timing.distortion.initialDelay
+            );
+
+            // Button effects
+            Scheduler.add(
+                handleZalgo,
+                timing.zalgo.interval,
+                timing.zalgo.probability,
+                timing.zalgo.initialDelay
+            );
+
+            Scheduler.add(
+                () => ButtonTeaser.show(timing.teaser.duration),
+                timing.teaser.interval,
+                timing.teaser.probability,
+                timing.teaser.initialDelay
+            );
+
+            // Blood writing
+            Scheduler.add(
+                () => BloodWriting.show({
+                    letterDelay: timing.bloodWriting.letterDelay,
+                    holdDuration: timing.bloodWriting.holdDuration,
+                    avoidElement: elements.container,
+                    centerMargin: 300
+                }),
+                timing.bloodWriting.interval,
+                timing.bloodWriting.probability,
+                timing.bloodWriting.initialDelay
+            );
+        };
+
+        // =============================================
+        // INITIALIZATION
+        // =============================================
+        const init = () => {
+            // Initialize modules
+            CustomCursor.init(elements.cursor);
+            BloodWriting.init(elements.bloodWriting, CONFIG.content.bloodWritingPhrases);
+            ButtonTeaser.init(elements.buttonText, CONFIG.button.teaserTexts);
+
+            // Register audio
+            AudioManager.register('ambient', elements.ambientSound, CONFIG.audio.ambient);
+            elements.crySounds.forEach((sound, i) => {
+                AudioManager.register(`cry${i}`, sound, CONFIG.audio.cry);
             });
 
-            requestAnimationFrame(updateBlackHole);
-        }
+            // Event listeners
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('click', handleFirstInteraction, { once: true });
+            document.addEventListener('keydown', handleFirstInteraction, { once: true });
+            document.addEventListener('touchstart', handleFirstInteraction, { once: true });
+            elements.button.addEventListener('click', handleButtonClick);
 
-        // Start animation
-        updateBlackHole();
+            // Start ambient effects
+            scheduleEffects();
+        };
+
+        init();
+    })();
     </script>
 </body>
 </html>
