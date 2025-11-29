@@ -1,0 +1,33 @@
+# Oh My Zsh framework
+[".oh-my-zsh"]
+    type = "git-repo"
+    url = "https://github.com/ohmyzsh/ohmyzsh.git"
+    refreshPeriod = "168h"  # 1 semaine
+    readonly = true         # Protège contre les modifications accidentelles
+    [".oh-my-zsh".pull]
+        args = ["--ff-only"]
+
+# Zsh plugins
+[".oh-my-zsh/custom/plugins/zsh-syntax-highlighting"]
+    type = "git-repo"
+    url = "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+    refreshPeriod = "168h"
+    readonly = true
+    [".oh-my-zsh/custom/plugins/zsh-syntax-highlighting".pull]
+        args = ["--ff-only"]
+
+[".oh-my-zsh/custom/plugins/zsh-autosuggestions"]
+    type = "git-repo"
+    url = "https://github.com/zsh-users/zsh-autosuggestions.git"
+    refreshPeriod = "168h"
+    readonly = true
+    [".oh-my-zsh/custom/plugins/zsh-autosuggestions".pull]
+        args = ["--ff-only"]
+
+[".oh-my-zsh/custom/plugins/zsh-completions"]
+    type = "git-repo"
+    url = "https://github.com/zsh-users/zsh-completions.git"
+    refreshPeriod = "168h"
+    readonly = true
+    [".oh-my-zsh/custom/plugins/zsh-completions".pull]
+        args = ["--ff-only"]
