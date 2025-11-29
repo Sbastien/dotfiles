@@ -1,0 +1,16 @@
+# Chezmoi configuration
+
+[edit]
+    command = "nvim"
+
+[diff]
+    command = "delta"
+    args = ["--paging=never"]
+
+[merge]
+    command = "nvim"
+    args = ["-d"]
+
+[git]
+    autoCommit = true   # Auto-commit after chezmoi add/apply
+    autoPush = false    # Keep push manual for control

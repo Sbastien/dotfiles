@@ -1,0 +1,302 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+# macOS System Defaults Configuration
+# This script configures sensible defaults for a development environment
+# Run by chezmoi when the script content changes
+
+set -e  # Exit on error
+
+# =============================================================================
+# HELPER FUNCTIONS
+# =============================================================================
+
+section() { printf "\n\033[1;34m==> %s\033[0m\n" "$1"; }
+info() { printf "    \033[0;37m%s\033[0m\n" "$1"; }
+success() { printf "    \033[0;32m✓ %s\033[0m\n" "$1"; }
+warn() { printf "    \033[0;33m⚠ %s\033[0m\n" "$1"; }
+
+# =============================================================================
+# CONFIGURATION
+# =============================================================================
+
+DOCK_ICON_SIZE=48         # Dock icon size (pixels)
+DOCK_ANIM_DURATION=0.1    # Mission Control animation (seconds)
+KEY_REPEAT_RATE=2         # Key repeat rate (1-15, lower = faster)
+KEY_REPEAT_DELAY=15       # Initial delay before repeat (10-120)
+
+# =============================================================================
+# GENERAL UI/UX
+# =============================================================================
+
+section "General UI/UX"
+
+# Disable boot sound
+sudo nvram SystemAudioVolume=" " 2>/dev/null || true
+info "Disabled boot sound"
+
+# Expand save panel by default (shows full directory browser)
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
+info "Expanded save panel by default"
+
+# Expand print panel by default (shows all print options)
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
+info "Expanded print panel by default"
+
+# Save to disk by default instead of iCloud
+defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
+info "Set default save location to disk (not iCloud)"
+
+# Prevent apps from terminating automatically when inactive
+defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
+info "Disabled automatic app termination"
+
+# Show system info (IP, hostname, OS) when clicking clock in login window
+sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName 2>/dev/null || true
+info "Enabled system info on login screen clock"
+
+success "UI/UX configured"
+
+# =============================================================================
+# FINDER
+# =============================================================================
+
+section "Finder"
+
+# Show all file extensions (e.g., .txt, .pdf)
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+info "Show all filename extensions"
+
+# Show status bar at bottom of Finder windows
+defaults write com.apple.finder ShowStatusBar -bool true
+info "Show status bar"
+
+# Show path bar at bottom of Finder windows
+defaults write com.apple.finder ShowPathbar -bool true
+info "Show path bar"
+
+# Show full POSIX path in Finder window title (e.g., /Users/name/Documents)
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+info "Show full path in window title"
+
+# Keep folders at top when sorting by name
+defaults write com.apple.finder _FXSortFoldersFirst -bool true
+info "Keep folders on top when sorting"
+
+# Search current folder by default (not entire Mac)
+defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+info "Search current folder by default"
+
+# Disable warning when changing file extension
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
+info "Disabled extension change warning"
+
+# Prevent .DS_Store files on network volumes
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+info "Disabled .DS_Store on network volumes"
+
+# Prevent .DS_Store files on USB volumes
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+info "Disabled .DS_Store on USB volumes"
+
+# Use list view by default (options: Nlsv=list, icnv=icon, clmv=column, glyv=gallery)
+defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+info "Set default view to list"
+
+# Show ~/Library folder (hidden by default)
+chflags nohidden ~/Library
+info "Unhid ~/Library folder"
+
+# Show /Volumes folder (hidden by default)
+sudo chflags nohidden /Volumes 2>/dev/null || true
+info "Unhid /Volumes folder"
+
+success "Finder configured"
+
+# =============================================================================
+# DOCK
+# =============================================================================
+
+section "Dock"
+
+# Set Dock icon size
+defaults write com.apple.dock tilesize -int "$DOCK_ICON_SIZE"
+info "Set icon size to ${DOCK_ICON_SIZE}px"
+
+# Minimize windows into app icon (not separate Dock item)
+defaults write com.apple.dock minimize-to-application -bool true
+info "Minimize windows into app icon"
+
+# Show indicator dots for open applications
+defaults write com.apple.dock show-process-indicators -bool true
+info "Show open app indicators"
+
+# Disable app launch bounce animation
+defaults write com.apple.dock launchanim -bool false
+info "Disabled launch animation"
+
+# Speed up Mission Control animations
+defaults write com.apple.dock expose-animation-duration -float "$DOCK_ANIM_DURATION"
+info "Sped up Mission Control (${DOCK_ANIM_DURATION}s)"
+
+# Don't auto-rearrange Spaces based on recent use
+defaults write com.apple.dock mru-spaces -bool false
+info "Disabled auto-rearrange Spaces"
+
+# Make hidden app icons translucent
+defaults write com.apple.dock showhidden -bool true
+info "Show hidden apps as translucent"
+
+# Don't show recent apps in Dock
+defaults write com.apple.dock show-recents -bool false
+info "Disabled recent apps in Dock"
+
+success "Dock configured"
+
+# =============================================================================
+# INPUT (KEYBOARD & TRACKPAD)
+# =============================================================================
+
+section "Input Devices"
+
+# Enable tap-to-click on trackpad
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+info "Enabled tap-to-click"
+
+# Set fast key repeat rate (lower = faster)
+defaults write NSGlobalDomain KeyRepeat -int "$KEY_REPEAT_RATE"
+info "Set key repeat rate to $KEY_REPEAT_RATE"
+
+# Set short delay before key repeat starts
+defaults write NSGlobalDomain InitialKeyRepeat -int "$KEY_REPEAT_DELAY"
+info "Set initial key repeat delay to $KEY_REPEAT_DELAY"
+
+# Enable press-and-hold for accented characters (é, è, ê, etc.)
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
+info "Enabled press-and-hold for accents"
+
+# Enable full keyboard navigation (Tab through all UI controls)
+defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+info "Enabled full keyboard access"
+
+success "Input devices configured"
+
+# =============================================================================
+# SCREEN & SCREENSHOTS
+# =============================================================================
+
+section "Screen & Screenshots"
+
+# Require password immediately after sleep/screensaver
+defaults write com.apple.screensaver askForPassword -int 1
+defaults write com.apple.screensaver askForPasswordDelay -int 0
+info "Require password immediately after sleep"
+
+# Save screenshots to Desktop
+defaults write com.apple.screencapture location -string "${HOME}/Desktop"
+info "Save screenshots to Desktop"
+
+# Save screenshots as PNG (options: BMP, GIF, JPG, PDF, PNG, TIFF)
+defaults write com.apple.screencapture type -string "png"
+info "Save screenshots as PNG"
+
+# Disable screenshot shadow
+defaults write com.apple.screencapture disable-shadow -bool true
+info "Disabled screenshot shadow"
+
+success "Screen configured"
+
+# =============================================================================
+# TERMINAL
+# =============================================================================
+
+section "Terminal"
+
+# Use only UTF-8 encoding
+defaults write com.apple.terminal StringEncodings -array 4
+info "Set Terminal encoding to UTF-8"
+
+# Enable Secure Keyboard Entry (prevents other apps from reading keystrokes)
+defaults write com.apple.terminal SecureKeyboardEntry -bool true
+info "Enabled Secure Keyboard Entry"
+
+success "Terminal configured"
+
+# =============================================================================
+# ACTIVITY MONITOR
+# =============================================================================
+
+section "Activity Monitor"
+
+# Show main window on launch
+defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
+info "Show main window on launch"
+
+# Show CPU usage in Dock icon (0=app, 2=history, 5=current)
+defaults write com.apple.ActivityMonitor IconType -int 5
+info "Show CPU graph in Dock icon"
+
+# Show all processes (not just user processes)
+defaults write com.apple.ActivityMonitor ShowCategory -int 0
+info "Show all processes"
+
+# Sort by CPU usage by default
+defaults write com.apple.ActivityMonitor SortColumn -string "CPUUsage"
+defaults write com.apple.ActivityMonitor SortDirection -int 0
+info "Sort by CPU usage (descending)"
+
+success "Activity Monitor configured"
+
+# =============================================================================
+# SECURITY
+# =============================================================================
+
+section "Security"
+
+# Enable application firewall
+if sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on 2>/dev/null; then
+    info "Enabled firewall"
+else
+    warn "Could not enable firewall (configure manually in System Settings)"
+fi
+
+# Enable stealth mode (don't respond to ping/port scans)
+if sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on 2>/dev/null; then
+    info "Enabled stealth mode"
+else
+    warn "Could not enable stealth mode"
+fi
+
+success "Security configured"
+
+# =============================================================================
+# SAFARI (Manual Configuration Required)
+# =============================================================================
+
+section "Safari"
+
+warn "Safari settings require manual configuration due to sandboxing"
+info "Open Safari > Settings and configure:"
+info "  Privacy: Disable Search Suggestions, Enable Do Not Track"
+info "  Advanced: Show full URL, Enable Develop menu"
+
+# =============================================================================
+# APPLY CHANGES
+# =============================================================================
+
+section "Applying Changes"
+
+# Restart affected apps to apply changes
+for app in "Dock" "Finder" "SystemUIServer"; do
+    killall "$app" 2>/dev/null || true
+done
+info "Restarted Dock, Finder, SystemUIServer"
+
+success "All changes applied!"
+
+printf "\n\033[1;33m⚠ Some changes require a logout or restart to take effect\033[0m\n\n"
+
+{{- end }}
