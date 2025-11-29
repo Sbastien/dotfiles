@@ -1,23 +1,23 @@
+<h1 align="center">
+  <br>
+  ⚙️ dotfiles
+  <br>
+</h1>
+
+<h4 align="center">Modern macOS development environment managed with chezmoi.</h4>
+
 <p align="center">
-  <h1 align="center">⚙️ dotfiles</h1>
-  <p align="center">Modern macOS development environment managed with chezmoi</p>
+  <a href="https://github.com/Sbastien/dotfiles/commits"><img src="https://img.shields.io/github/last-commit/Sbastien/dotfiles?style=for-the-badge&color=81C784" alt="Last Commit"></a>
+  <a href="https://www.chezmoi.io/"><img src="https://img.shields.io/badge/managed%20with-chezmoi-blue?style=for-the-badge" alt="chezmoi"></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/Sbastien/dotfiles/actions"><img src="https://img.shields.io/github/actions/workflow/status/Sbastien/dotfiles/ci.yml?label=CI" alt="CI"></a>
-  <a href="https://github.com/Sbastien/dotfiles/commits"><img src="https://img.shields.io/github/last-commit/Sbastien/dotfiles" alt="Last Commit"></a>
-  <a href="https://www.chezmoi.io/"><img src="https://img.shields.io/badge/managed%20with-chezmoi-blue" alt="chezmoi"></a>
-  <a href="#license"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
+  <a href="https://www.apple.com/macos"><img src="https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="macOS"></a>
+  <a href="https://www.zsh.org/"><img src="https://img.shields.io/badge/Zsh-F15A24?style=for-the-badge&logo=gnu-bash&logoColor=white" alt="Zsh"></a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/macOS-000000?logo=apple&logoColor=white" alt="macOS">
-  <img src="https://img.shields.io/badge/Zsh-F15A24?logo=zsh&logoColor=white" alt="Zsh">
-  <img src="https://img.shields.io/badge/Neovim-57A143?logo=neovim&logoColor=white" alt="Neovim">
-</p>
-
-<p align="center">
-  <b>Zsh + Oh My Zsh · Starship prompt · Modern CLI tools · macOS defaults</b>
+  <strong>Zsh + Oh My Zsh · Starship prompt · Modern CLI tools · macOS defaults</strong>
 </p>
 
 <p align="center">
@@ -26,7 +26,7 @@
   <a href="#whats-included">Features</a>
 </p>
 
----
+<br>
 
 ## Quick Install
 
@@ -36,38 +36,42 @@ chezmoi init --apply Sbastien
 
 <details>
 <summary>First time setup</summary>
+<br>
+
+Install dependencies with [Brewfile](https://github.com/Sbastien/Brewfile) or manually:
 
 ```bash
-# 1. Install dependencies (or use Brewfile)
 brew install chezmoi zsh starship zoxide
 brew install bat eza fd ripgrep fzf btop dust duf procs
 brew install git git-delta lazygit neovim mise jq yq
+```
 
-# 2. Create local git config
+Create local git config:
+
+```bash
 cat <<EOF > ~/.gitconfig.local
 [user]
     name = Your Name
     email = your.email@example.com
 EOF
+```
 
-# 3. Apply dotfiles
+Apply dotfiles:
+
+```bash
 chezmoi init --apply Sbastien
-
-# 4. Restart terminal
 ```
 
 </details>
 
 ## What's Included
 
-| Category | Tools |
-|----------|-------|
-| **Shell** | Zsh, Oh My Zsh, Starship prompt, Zoxide |
-| **CLI** | bat, eza, fd, ripgrep, fzf, btop, dust, duf, procs |
-| **Git** | Delta pager, lazygit, useful aliases |
-| **Editor** | Neovim (minimal config) |
-| **Runtime** | mise (Node, Python, Ruby, etc.) |
-| **macOS** | Automated system defaults (Dock, Finder, keyboard) |
+- **Shell** — Zsh, Oh My Zsh, Starship prompt, Zoxide
+- **CLI Tools** — bat, eza, fd, ripgrep, fzf, btop, dust, duf, procs
+- **Git** — Delta pager, lazygit, useful aliases
+- **Editor** — Neovim (minimal config)
+- **Runtime** — mise (Node, Python, Ruby, etc.)
+- **macOS** — Automated system defaults (Dock, Finder, keyboard)
 
 ## Structure
 
@@ -103,14 +107,9 @@ update
 
 ## Related
 
-- **[Brewfile](https://github.com/Sbastien/Brewfile)** — Homebrew packages (installs the tools)
-- **dotfiles** — Configuration (configures the tools)
+My [Brewfile](https://github.com/Sbastien/Brewfile) installs the tools — these dotfiles configure them.
 
----
-
-## License
-
-MIT — feel free to fork and adapt.
+<br>
 
 ---
 
