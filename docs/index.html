@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dotfiles | Mission Control</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --space-black: #020208;
+            --hull-dark: #0a0e14;
+            --hull-mid: #131a24;
+            --panel-bg: rgba(10, 20, 35, 0.9);
+            --accent-orange: #ff6b35;
+            --accent-cyan: #00d4ff;
+            --accent-green: #00ff9d;
+            --warning-red: #ff3366;
+            --text-bright: #e8f4ff;
+            --text-dim: #5a7a9a;
+            --border-glow: rgba(0, 212, 255, 0.4);
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background: var(--space-black);
+            color: var(--text-bright);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Deep space background */
+        .space {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(60, 20, 100, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(20, 60, 100, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, #0a0a15 0%, #020208 100%);
+        }
+
+        /* Massive starfield */
+        .stars-layer {
+            position: fixed;
+            width: 300%;
+            height: 300%;
+            z-index: -9;
+        }
+
+        .stars-far {
+            background-image:
+                /* Tiny distant stars - white */
+                radial-gradient(1px 1px at 50px 100px, #fff, transparent),
+                radial-gradient(1px 1px at 150px 250px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 250px 50px, #fff, transparent),
+                radial-gradient(1px 1px at 350px 400px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 450px 150px, #fff, transparent),
+                radial-gradient(1px 1px at 550px 350px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 650px 500px, #fff, transparent),
+                radial-gradient(1px 1px at 750px 200px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 850px 450px, #fff, transparent),
+                radial-gradient(1px 1px at 950px 100px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 100px 550px, #fff, transparent),
+                radial-gradient(1px 1px at 200px 700px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 300px 850px, #fff, transparent),
+                radial-gradient(1px 1px at 400px 650px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 500px 950px, #fff, transparent),
+                radial-gradient(1px 1px at 600px 750px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 700px 900px, #fff, transparent),
+                radial-gradient(1px 1px at 800px 600px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 900px 800px, #fff, transparent),
+                radial-gradient(1px 1px at 1000px 700px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 75px 325px, #fff, transparent),
+                radial-gradient(1px 1px at 175px 475px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 275px 275px, #fff, transparent),
+                radial-gradient(1px 1px at 375px 175px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 475px 575px, #fff, transparent),
+                radial-gradient(1px 1px at 575px 125px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 675px 375px, #fff, transparent),
+                radial-gradient(1px 1px at 775px 525px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 875px 225px, #fff, transparent),
+                radial-gradient(1px 1px at 975px 425px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 125px 825px, #fff, transparent),
+                radial-gradient(1px 1px at 225px 925px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 325px 725px, #fff, transparent),
+                radial-gradient(1px 1px at 425px 875px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 525px 775px, #fff, transparent),
+                radial-gradient(1px 1px at 625px 675px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 725px 975px, #fff, transparent),
+                radial-gradient(1px 1px at 825px 875px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 925px 575px, #fff, transparent),
+                radial-gradient(1px 1px at 25px 975px, rgba(255,255,255,0.7), transparent);
+            background-size: 1000px 1000px;
+            animation: drift 300s linear infinite;
+        }
+
+        .stars-mid {
+            background-image:
+                /* Medium stars - some colored */
+                radial-gradient(1.5px 1.5px at 80px 180px, #fff, transparent),
+                radial-gradient(1.5px 1.5px at 220px 320px, rgba(200,220,255,0.9), transparent),
+                radial-gradient(1.5px 1.5px at 380px 80px, #fff, transparent),
+                radial-gradient(1.5px 1.5px at 520px 480px, rgba(255,220,180,0.9), transparent),
+                radial-gradient(1.5px 1.5px at 680px 220px, #fff, transparent),
+                radial-gradient(1.5px 1.5px at 820px 380px, rgba(180,200,255,0.9), transparent),
+                radial-gradient(1.5px 1.5px at 920px 620px, #fff, transparent),
+                radial-gradient(1.5px 1.5px at 120px 720px, rgba(255,200,200,0.9), transparent),
+                radial-gradient(1.5px 1.5px at 280px 580px, #fff, transparent),
+                radial-gradient(1.5px 1.5px at 420px 920px, rgba(200,255,220,0.9), transparent),
+                radial-gradient(1.5px 1.5px at 580px 280px, #fff, transparent),
+                radial-gradient(1.5px 1.5px at 720px 820px, rgba(220,200,255,0.9), transparent),
+                radial-gradient(1.5px 1.5px at 880px 120px, #fff, transparent),
+                radial-gradient(1.5px 1.5px at 980px 480px, rgba(255,255,200,0.9), transparent),
+                radial-gradient(1.5px 1.5px at 180px 420px, #fff, transparent),
+                radial-gradient(1.5px 1.5px at 320px 180px, rgba(200,230,255,0.9), transparent),
+                radial-gradient(1.5px 1.5px at 480px 780px, #fff, transparent),
+                radial-gradient(1.5px 1.5px at 620px 520px, rgba(255,210,180,0.9), transparent),
+                radial-gradient(1.5px 1.5px at 780px 680px, #fff, transparent),
+                radial-gradient(1.5px 1.5px at 50px 850px, rgba(180,220,255,0.9), transparent);
+            background-size: 1000px 1000px;
+            animation: drift 200s linear infinite reverse;
+        }
+
+        .stars-close {
+            background-image:
+                /* Bright close stars with glow */
+                radial-gradient(2px 2px at 150px 300px, #fff, transparent),
+                radial-gradient(2.5px 2.5px at 350px 150px, rgba(150,200,255,1), transparent),
+                radial-gradient(2px 2px at 550px 550px, #fff, transparent),
+                radial-gradient(3px 3px at 750px 350px, rgba(255,200,150,1), transparent),
+                radial-gradient(2px 2px at 950px 750px, #fff, transparent),
+                radial-gradient(2.5px 2.5px at 250px 650px, rgba(200,150,255,1), transparent),
+                radial-gradient(2px 2px at 450px 450px, #fff, transparent),
+                radial-gradient(3px 3px at 650px 850px, rgba(150,255,200,1), transparent),
+                radial-gradient(2px 2px at 850px 50px, #fff, transparent),
+                radial-gradient(2.5px 2.5px at 50px 550px, rgba(255,255,150,1), transparent),
+                radial-gradient(2px 2px at 300px 900px, #fff, transparent),
+                radial-gradient(2.5px 2.5px at 500px 200px, rgba(150,220,255,1), transparent),
+                radial-gradient(2px 2px at 700px 600px, #fff, transparent),
+                radial-gradient(3px 3px at 900px 400px, rgba(255,180,180,1), transparent),
+                radial-gradient(2px 2px at 100px 100px, #fff, transparent),
+                radial-gradient(2.5px 2.5px at 400px 700px, rgba(180,255,220,1), transparent);
+            background-size: 1000px 1000px;
+            animation: drift 120s linear infinite;
+        }
+
+        /* Twinkling stars overlay */
+        .stars-twinkle {
+            background-image:
+                radial-gradient(2px 2px at 200px 400px, #fff, transparent),
+                radial-gradient(2px 2px at 600px 200px, #fff, transparent),
+                radial-gradient(2px 2px at 400px 800px, #fff, transparent),
+                radial-gradient(2px 2px at 800px 600px, #fff, transparent),
+                radial-gradient(2px 2px at 100px 700px, #fff, transparent),
+                radial-gradient(2px 2px at 900px 100px, #fff, transparent),
+                radial-gradient(2px 2px at 300px 500px, #fff, transparent),
+                radial-gradient(2px 2px at 700px 900px, #fff, transparent);
+            background-size: 1000px 1000px;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes drift {
+            from { transform: translate(0, 0); }
+            to { transform: translate(-1000px, -1000px); }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Black Hole - Realistic */
+        .blackhole-container {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            z-index: 1000;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Event horizon - the actual black center */
+        .event-horizon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: #000;
+            border-radius: 50%;
+            box-shadow:
+                0 0 0 3px rgba(0,0,0,1),
+                0 0 0 8px rgba(0,0,0,0.95),
+                0 0 0 15px rgba(0,0,0,0.85),
+                0 0 0 25px rgba(0,0,0,0.7),
+                0 0 0 40px rgba(0,0,0,0.5),
+                0 0 80px 50px rgba(0,0,0,0.9);
+            z-index: 10;
+        }
+
+        /* Photon sphere - light bending ring */
+        .photon-sphere {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 200, 100, 0.8);
+            box-shadow:
+                0 0 20px 5px rgba(255, 150, 50, 0.6),
+                inset 0 0 20px 5px rgba(255, 100, 0, 0.3);
+            z-index: 9;
+        }
+
+        /* Accretion disk - horizontal view */
+        .accretion-disk {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(80deg);
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                rgba(255, 80, 0, 0.9) 0deg,
+                rgba(255, 150, 50, 1) 45deg,
+                rgba(255, 220, 150, 1) 90deg,
+                rgba(255, 255, 220, 1) 120deg,
+                rgba(255, 220, 150, 1) 150deg,
+                rgba(255, 150, 50, 1) 180deg,
+                rgba(255, 80, 0, 0.9) 210deg,
+                rgba(200, 50, 0, 0.8) 240deg,
+                rgba(150, 30, 0, 0.7) 270deg,
+                rgba(200, 50, 0, 0.8) 300deg,
+                rgba(255, 80, 0, 0.9) 360deg
+            );
+            mask: radial-gradient(circle, transparent 18%, black 22%, black 48%, transparent 52%);
+            -webkit-mask: radial-gradient(circle, transparent 18%, black 22%, black 48%, transparent 52%);
+            animation: disk-spin 8s linear infinite;
+            filter: blur(2px);
+            z-index: 5;
+        }
+
+        /* Second disk layer for depth */
+        .accretion-disk-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(80deg);
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 180deg,
+                rgba(255, 200, 100, 0.8) 0deg,
+                rgba(255, 255, 200, 1) 60deg,
+                rgba(255, 200, 100, 0.8) 120deg,
+                rgba(255, 150, 50, 0.6) 180deg,
+                rgba(255, 100, 0, 0.4) 240deg,
+                rgba(255, 150, 50, 0.6) 300deg,
+                rgba(255, 200, 100, 0.8) 360deg
+            );
+            mask: radial-gradient(circle, transparent 25%, black 30%, black 45%, transparent 50%);
+            -webkit-mask: radial-gradient(circle, transparent 25%, black 30%, black 45%, transparent 50%);
+            animation: disk-spin 5s linear infinite reverse;
+            filter: blur(1px);
+            z-index: 6;
+        }
+
+        @keyframes disk-spin {
+            from { transform: translate(-50%, -50%) rotateX(80deg) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotateX(80deg) rotate(360deg); }
+        }
+
+        /* Gravitational lensing - the Einstein ring effect */
+        .einstein-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 180, 100, 0.4);
+            box-shadow:
+                0 0 40px 15px rgba(255, 120, 50, 0.15),
+                0 0 80px 30px rgba(255, 80, 30, 0.1),
+                0 0 120px 50px rgba(255, 50, 0, 0.05);
+            z-index: 4;
+            animation: ring-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes ring-pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+        }
+
+        /* Jet streams */
+        .jet {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            background: linear-gradient(to top, rgba(100, 150, 255, 0.8), transparent);
+            filter: blur(2px);
+            z-index: 3;
+        }
+
+        .jet-top {
+            top: -80px;
+            height: 60px;
+            animation: jet-flicker 0.5s ease-in-out infinite alternate;
+        }
+
+        .jet-bottom {
+            bottom: -80px;
+            height: 60px;
+            background: linear-gradient(to bottom, rgba(100, 150, 255, 0.8), transparent);
+            animation: jet-flicker 0.5s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes jet-flicker {
+            0% { opacity: 0.5; height: 50px; }
+            100% { opacity: 1; height: 70px; }
+        }
+
+        /* Debris particles spiraling in */
+        .debris {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px 2px rgba(255, 200, 100, 0.8);
+        }
+
+        .debris:nth-child(1) { animation: spiral-in 3s linear infinite; }
+        .debris:nth-child(2) { animation: spiral-in 3s linear infinite 0.5s; }
+        .debris:nth-child(3) { animation: spiral-in 3s linear infinite 1s; }
+        .debris:nth-child(4) { animation: spiral-in 3s linear infinite 1.5s; }
+        .debris:nth-child(5) { animation: spiral-in 3s linear infinite 2s; }
+        .debris:nth-child(6) { animation: spiral-in 3s linear infinite 2.5s; }
+
+        @keyframes spiral-in {
+            0% {
+                transform: rotate(0deg) translateX(140px) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: rotate(720deg) translateX(30px) rotate(-720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Distant planet */
+        .planet {
+            position: fixed;
+            bottom: -200px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 30% 30%, #2a4a6a 0%, #1a2a3a 40%, #0a1520 100%);
+            box-shadow:
+                inset -30px -30px 60px rgba(0,0,0,0.8),
+                inset 20px 20px 40px rgba(100,150,200,0.1),
+                0 0 100px rgba(0,100,150,0.2);
+            z-index: -8;
+            opacity: 0.6;
+        }
+
+        .planet::after {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            border-radius: 50%;
+            background: transparent;
+            box-shadow: 0 0 80px 20px rgba(0, 150, 255, 0.1);
+        }
+
+        /* HUD Frame */
+        .hud-frame {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .hud-corner {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 2px solid var(--accent-cyan);
+            opacity: 0.4;
+        }
+
+        .hud-corner.top-left {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .hud-corner.top-right {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .hud-corner.bottom-left {
+            bottom: 20px;
+            left: 20px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .hud-corner.bottom-right {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Scan lines effect */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.03) 2px,
+                rgba(0, 0, 0, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 30px;
+            position: relative;
+        }
+
+        /* Header - Mission Control */
+        header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .mission-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border: 1px solid var(--accent-orange);
+            border-radius: 4px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            color: var(--accent-orange);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            animation: flicker 4s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.8; }
+            94% { opacity: 1; }
+            96% { opacity: 0.9; }
+            97% { opacity: 1; }
+        }
+
+        .logo-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 5rem;
+            filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.5));
+        }
+
+        .logo-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            border: 2px solid var(--accent-cyan);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: rotate 20s linear infinite;
+        }
+
+        .logo-ring::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #fff 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            text-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .tagline {
+            font-size: 1rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+        }
+
+        /* Command Input */
+        .command-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 24px 32px;
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .command-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .command-panel:hover {
+            border-color: var(--accent-cyan);
+            box-shadow:
+                0 0 30px rgba(0, 212, 255, 0.2),
+                inset 0 0 30px rgba(0, 212, 255, 0.05);
+        }
+
+        .command-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.7rem;
+            color: var(--accent-green);
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; box-shadow: 0 0 5px var(--accent-green); }
+            50% { opacity: 0.5; box-shadow: none; }
+        }
+
+        .command-text {
+            font-size: 1.1rem;
+            color: var(--text-bright);
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .command-text .prompt {
+            color: var(--accent-orange);
+        }
+
+        /* Systems Grid */
+        .systems-section {
+            margin-bottom: 80px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .section-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border-glow), transparent);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .system-card {
+            background: var(--panel-bg);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .system-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-cyan);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .system-card:hover {
+            border-color: var(--border-glow);
+            transform: translateX(5px);
+        }
+
+        .system-card:hover::before {
+            opacity: 1;
+        }
+
+        .system-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .system-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .system-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            letter-spacing: 1px;
+        }
+
+        .system-status {
+            font-size: 0.7rem;
+            color: var(--accent-green);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .system-desc {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        /* Tech Modules */
+        .modules-section {
+            margin-bottom: 60px;
+        }
+
+        .modules-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .module-badge {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 4px;
+            padding: 10px 18px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+        }
+
+        .module-badge:hover {
+            border-color: var(--accent-cyan);
+            color: var(--text-bright);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* Terminal Display */
+        .terminal-display {
+            background: var(--hull-dark);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 60px;
+        }
+
+        .terminal-bar {
+            background: var(--hull-mid);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .terminal-btn.close { background: #ff5f57; }
+        .terminal-btn.min { background: #febc2e; }
+        .terminal-btn.max { background: #28c840; }
+
+        .terminal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+
+        .terminal-body {
+            padding: 24px;
+            font-size: 0.9rem;
+            line-height: 2;
+        }
+
+        .terminal-line {
+            display: flex;
+            gap: 10px;
+        }
+
+        .terminal-prompt {
+            color: var(--accent-green);
+        }
+
+        .terminal-cmd {
+            color: var(--text-bright);
+        }
+
+        .terminal-output {
+            color: var(--text-dim);
+            padding-left: 24px;
+        }
+
+        .terminal-output.success {
+            color: var(--accent-green);
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            border-radius: 4px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, var(--accent-cyan), #0088aa);
+            color: var(--space-black);
+            font-weight: 700;
+            border: none;
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .action-btn.secondary:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 100px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(0, 212, 255, 0.1);
+        }
+
+        .footer-text {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+        }
+
+        .footer-text a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+
+        .coordinates {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            opacity: 0.5;
+            margin-top: 15px;
+            letter-spacing: 2px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+                letter-spacing: 4px;
+            }
+
+            .logo {
+                font-size: 3.5rem;
+            }
+
+            .command-panel {
+                padding: 18px 24px;
+            }
+
+            .hud-corner {
+                width: 40px;
+                height: 40px;
+            }
+
+            .planet {
+                width: 300px;
+                height: 300px;
+                bottom: -150px;
+                right: -100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Deep space background -->
+    <div class="space"></div>
+    <div class="stars-layer stars-far"></div>
+    <div class="stars-layer stars-mid"></div>
+    <div class="stars-layer stars-close"></div>
+    <div class="stars-layer stars-twinkle"></div>
+    <div class="planet"></div>
+
+    <!-- Black Hole -->
+    <div class="blackhole-container" id="blackhole">
+        <div class="einstein-ring"></div>
+        <div class="jet jet-top"></div>
+        <div class="jet jet-bottom"></div>
+        <div class="accretion-disk"></div>
+        <div class="accretion-disk-inner"></div>
+        <div class="photon-sphere"></div>
+        <div class="event-horizon"></div>
+        <div class="debris"></div>
+        <div class="debris"></div>
+        <div class="debris"></div>
+        <div class="debris"></div>
+        <div class="debris"></div>
+        <div class="debris"></div>
+    </div>
+
+    <!-- HUD Frame -->
+    <div class="hud-frame">
+        <div class="hud-corner top-left"></div>
+        <div class="hud-corner top-right"></div>
+        <div class="hud-corner bottom-left"></div>
+        <div class="hud-corner bottom-right"></div>
+    </div>
+
+    <!-- Scanlines -->
+    <div class="scanlines"></div>
+
+    <div class="container">
+        <header>
+            <div class="mission-badge">Mission Control v1.0</div>
+
+            <div class="logo-container">
+                <div class="logo-ring"></div>
+                <div class="logo">🚀</div>
+            </div>
+
+            <h1>Dotfiles</h1>
+            <p class="tagline">Modern macOS development environment • Managed with chezmoi</p>
+
+            <div class="command-panel" onclick="navigator.clipboard.writeText('chezmoi init --apply Sbastien')">
+                <div class="command-label">
+                    <span class="status-dot"></span>
+                    Deploy Command
+                </div>
+                <div class="command-text">
+                    <span class="prompt">$</span> chezmoi init --apply Sbastien
+                </div>
+            </div>
+        </header>
+
+        <section class="systems-section">
+            <div class="section-header">
+                <span class="section-line"></span>
+                <h2 class="section-title">Onboard Systems</h2>
+                <span class="section-line" style="background: linear-gradient(270deg, var(--border-glow), transparent);"></span>
+            </div>
+
+            <div class="systems-grid">
+                <div class="system-card">
+                    <div class="system-header">
+                        <div class="system-icon">🐚</div>
+                        <div>
+                            <div class="system-name">Shell Core</div>
+                            <div class="system-status">● Online</div>
+                        </div>
+                    </div>
+                    <p class="system-desc">Zsh + Oh My Zsh with syntax highlighting, autosuggestions, and intelligent completions.</p>
+                </div>
+
+                <div class="system-card">
+                    <div class="system-header">
+                        <div class="system-icon">⭐</div>
+                        <div>
+                            <div class="system-name">Navigation HUD</div>
+                            <div class="system-status">● Online</div>
+                        </div>
+                    </div>
+                    <p class="system-desc">Starship prompt displaying git status, runtime versions, and system metrics in real-time.</p>
+                </div>
+
+                <div class="system-card">
+                    <div class="system-header">
+                        <div class="system-icon">🔧</div>
+                        <div>
+                            <div class="system-name">Tool Array</div>
+                            <div class="system-status">● Online</div>
+                        </div>
+                    </div>
+                    <p class="system-desc">bat, eza, fd, ripgrep, fzf, btop — next-gen alternatives to classic Unix utilities.</p>
+                </div>
+
+                <div class="system-card">
+                    <div class="system-header">
+                        <div class="system-icon">📦</div>
+                        <div>
+                            <div class="system-name">Config Sync</div>
+                            <div class="system-status">● Online</div>
+                        </div>
+                    </div>
+                    <p class="system-desc">Chezmoi-managed dotfiles with templates, encryption, and cross-machine synchronization.</p>
+                </div>
+
+                <div class="system-card">
+                    <div class="system-header">
+                        <div class="system-icon">🍎</div>
+                        <div>
+                            <div class="system-name">OS Interface</div>
+                            <div class="system-status">● Online</div>
+                        </div>
+                    </div>
+                    <p class="system-desc">Automated macOS defaults — Dock, Finder, keyboard, trackpad, and security settings.</p>
+                </div>
+
+                <div class="system-card">
+                    <div class="system-header">
+                        <div class="system-icon">⚡</div>
+                        <div>
+                            <div class="system-name">Quick Deploy</div>
+                            <div class="system-status">● Ready</div>
+                        </div>
+                    </div>
+                    <p class="system-desc">One command to configure a new Mac. Full environment ready in minutes.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="modules-section">
+            <div class="section-header">
+                <span class="section-line"></span>
+                <h2 class="section-title">Loaded Modules</h2>
+                <span class="section-line" style="background: linear-gradient(270deg, var(--border-glow), transparent);"></span>
+            </div>
+
+            <div class="modules-grid">
+                <span class="module-badge">Zsh</span>
+                <span class="module-badge">Oh My Zsh</span>
+                <span class="module-badge">Starship</span>
+                <span class="module-badge">Neovim</span>
+                <span class="module-badge">Git + Delta</span>
+                <span class="module-badge">mise</span>
+                <span class="module-badge">Homebrew</span>
+                <span class="module-badge">chezmoi</span>
+            </div>
+        </section>
+
+        <div class="terminal-display">
+            <div class="terminal-bar">
+                <div class="terminal-controls">
+                    <span class="terminal-btn close"></span>
+                    <span class="terminal-btn min"></span>
+                    <span class="terminal-btn max"></span>
+                </div>
+                <span class="terminal-title">Bridge Terminal — zsh</span>
+                <span></span>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-line">
+                    <span class="terminal-prompt">❯</span>
+                    <span class="terminal-cmd">update</span>
+                </div>
+                <div class="terminal-output">🍺 Updating Homebrew...</div>
+                <div class="terminal-output">📝 Syncing Neovim plugins...</div>
+                <div class="terminal-output">⚙️ Updating dotfiles...</div>
+                <div class="terminal-output success">✅ All systems updated!</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="https://github.com/Sbastien/dotfiles" class="action-btn primary">
+                View Source
+            </a>
+            <a href="https://github.com/Sbastien/Brewfile" class="action-btn secondary">
+                Brewfile
+            </a>
+        </div>
+
+        <footer>
+            <p class="footer-text">Engineered by <a href="https://github.com/Sbastien">Sbastien</a></p>
+            <p class="coordinates">LAT 48.8566° N • LON 2.3522° E • ALT ∞</p>
+        </footer>
+    </div>
+
+    <script>
+        // Black Hole with gravitational distortion effect
+        const blackhole = document.getElementById('blackhole');
+        const container = document.querySelector('.container');
+
+        // Black hole path - smooth curved trajectory
+        let time = 0;
+        const speed = 0.0003;
+
+        // Get all elements that can be affected
+        const affectedElements = document.querySelectorAll(
+            '.system-card, .module-badge, .command-panel, .terminal-display, ' +
+            '.action-btn, h1, .tagline, .logo, .mission-badge, .section-title, ' +
+            '.footer-text, .coordinates'
+        );
+
+        function updateBlackHole() {
+            time += speed;
+
+            // Lissajous curve for interesting movement
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const radiusX = window.innerWidth * 0.4;
+            const radiusY = window.innerHeight * 0.35;
+
+            const x = centerX + Math.sin(time * 2.3) * radiusX;
+            const y = centerY + Math.sin(time * 1.7) * radiusY;
+
+            blackhole.style.left = x + 'px';
+            blackhole.style.top = y + 'px';
+
+            // Apply gravitational distortion to elements
+            affectedElements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const elCenterX = rect.left + rect.width / 2;
+                const elCenterY = rect.top + rect.height / 2;
+
+                const dx = x - elCenterX;
+                const dy = y - elCenterY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                const maxEffect = 250; // Distance at which effect starts
+                const minDistance = 80; // Event horizon - maximum pull
+
+                if (distance < maxEffect) {
+                    // Calculate pull strength (stronger when closer)
+                    const strength = Math.pow((maxEffect - distance) / maxEffect, 2);
+                    const pullStrength = strength * 60; // Max pixels to pull
+
+                    // Direction toward black hole
+                    const angle = Math.atan2(dy, dx);
+                    const pullX = Math.cos(angle) * pullStrength;
+                    const pullY = Math.sin(angle) * pullStrength;
+
+                    // Scale effect (shrink as it gets closer)
+                    const scale = 1 - (strength * 0.3);
+
+                    // Rotation effect (spiral)
+                    const rotation = strength * 15;
+
+                    // Opacity (fade as it gets very close)
+                    const opacity = distance < minDistance ?
+                        Math.max(0, distance / minDistance) : 1;
+
+                    // Stretch effect toward black hole
+                    const stretchX = 1 + (strength * 0.2 * Math.abs(Math.cos(angle)));
+                    const stretchY = 1 + (strength * 0.2 * Math.abs(Math.sin(angle)));
+
+                    el.style.transform = `
+                        translate(${pullX}px, ${pullY}px)
+                        scale(${scale * stretchX}, ${scale * stretchY})
+                        rotate(${rotation}deg)
+                    `;
+                    el.style.opacity = opacity;
+                    el.style.filter = `blur(${strength * 2}px)`;
+                    el.style.transition = 'none';
+                } else {
+                    // Reset when far away
+                    el.style.transform = '';
+                    el.style.opacity = '';
+                    el.style.filter = '';
+                    el.style.transition = 'all 0.5s ease-out';
+                }
+            });
+
+            requestAnimationFrame(updateBlackHole);
+        }
+
+        // Start animation
+        updateBlackHole();
+    </script>
+</body>
+</html>
