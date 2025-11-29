@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dotfiles</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.6.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.12"></script>
+    <style>
+        @font-face { font-family: 'Paint'; src: url('assets/Paint.ttf') format('truetype'); font-display: swap; }
+
+        :root {
+            --blood: #611; --blood-light: #833; --blood-bright: #944; --glow: #500;
+            --z-base: 10; --z-drip: 30; --z-edge: 45; --z-overlay: 50; --z-ui: 100; --z-cursor: 9999;
+            --edge: 50px;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; }
+        body { font-family: 'Share Tech Mono', monospace; background: #000; display: flex; align-items: center; justify-content: center; cursor: none; }
+
+        /* Cursor */
+        .cursor { position: fixed; width: 12px; height: 12px; border: 1px solid #633; border-radius: 50%; pointer-events: none; z-index: var(--z-cursor); transform: translate(-50%, -50%); animation: pulse 2s ease-in-out infinite; }
+        .cursor::after { content: ''; position: absolute; inset: 50%; width: 3px; height: 3px; background: #844; border-radius: 50%; transform: translate(-50%, -50%); }
+        @keyframes pulse { 0%, 100% { opacity: .6; transform: translate(-50%, -50%) scale(1); } 50% { opacity: .9; transform: translate(-50%, -50%) scale(1.15); } }
+        .cursor--click { animation: none; transform: translate(-50%, -50%) scale(.8); border-color: #944; transition: transform .1s; }
+
+        /* Overlays */
+        .overlay { position: fixed; inset: 0; pointer-events: none; }
+        .noise { z-index: var(--z-ui); opacity: .04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+        .vignette { z-index: var(--z-overlay); background: radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,.7) 100%); animation: vignette 6s ease-in-out infinite; }
+        @keyframes vignette { 0%, 100% { opacity: 1; } 50% { opacity: .85; } }
+        .flash { z-index: var(--z-overlay); background: #200; opacity: 0; transition: opacity .05s; }
+        .flash--on { opacity: .3; }
+
+        /* Edges */
+        .edge { position: fixed; pointer-events: none; z-index: var(--z-edge); background: #000; animation: edgePulse 8s ease-in-out infinite; }
+        .edge--l { inset: 0 auto 0 0; width: var(--edge); }
+        .edge--r { inset: 0 0 0 auto; width: var(--edge); }
+        .edge--t { inset: 0 0 auto 0; height: var(--edge); }
+        .edge--b { inset: auto 0 0 0; height: var(--edge); }
+        @keyframes edgePulse { 0%, 100% { opacity: .7; } 50% { opacity: .9; } }
+
+        /* Drip */
+        .drip { position: fixed; top: -50px; width: 3px; height: 0; background: linear-gradient(to bottom, transparent, #711, #922); opacity: 0; pointer-events: none; z-index: var(--z-drip); box-shadow: 0 0 6px var(--glow); }
+        .drip--on { animation: drip 4s ease-in forwards; }
+        @keyframes drip { 0% { height: 0; opacity: .6; top: -50px; } 70% { height: 150px; opacity: .4; } 100% { height: 200px; opacity: 0; top: 100%; } }
+
+        /* Handprint */
+        .hand { position: fixed; pointer-events: none; z-index: var(--z-overlay); width: 80px; opacity: 0; filter: brightness(.3) saturate(.6); animation: handIn .1s ease-out forwards, handOut 15s ease 1s forwards; }
+        @keyframes handIn { to { opacity: .6; } }
+        @keyframes handOut { to { opacity: 0; } }
+
+        /* Glitch */
+        @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-5px, 3px); filter: hue-rotate(90deg); } 40% { transform: translate(3px, -3px); } 60% { transform: translate(-3px, 0); clip-path: inset(30% 0 40% 0); } 80% { transform: translate(0, -3px); clip-path: none; } 100% { transform: translate(0); } }
+        .glitch { animation: glitch .3s ease forwards; }
+        @keyframes distort { 0%, 100% { filter: none; } 50% { filter: blur(1px) brightness(.9); transform: scale(1.005) skewX(.3deg); } }
+        .distort { animation: distort .5s ease forwards; }
+
+        /* Button */
+        .btn-wrap { text-align: center; z-index: var(--z-base); animation: heartbeat 4s ease-in-out infinite; }
+        @keyframes heartbeat { 0%, 20%, 100% { transform: scale(1); } 5% { transform: scale(1.03); filter: drop-shadow(0 0 15px var(--blood)); } 15% { transform: scale(1.02); } }
+        .btn-wrap a { color: inherit; text-decoration: none; display: inline-block; }
+        .btn { font-size: 1.1rem; letter-spacing: 10px; text-transform: uppercase; opacity: 0; color: var(--blood-light); text-shadow: 0 0 20px var(--glow), 0 0 40px #300; padding: 15px 30px; border: 1px solid #322; transition: opacity .3s, color .3s, letter-spacing .5s, border-color .3s; animation: fadeIn 3s ease-in 1s forwards; }
+        .btn:hover { color: var(--blood-bright); border-color: #433; text-shadow: 0 0 25px #600, 0 0 50px #300; letter-spacing: 14px; }
+        .btn.hide { opacity: 0 !important; transition: none; }
+        @keyframes fadeIn { to { opacity: .9; } }
+
+        /* Button FX */
+        .btn--glitch { animation: btnGlitch .4s steps(2) infinite; }
+        .btn--shake { animation: btnShake .08s linear infinite; }
+        .btn--distort { animation: btnDistort 2s ease-in-out infinite; }
+        .btn--breathe { animation: btnBreathe 2.5s ease-in-out infinite; }
+        .btn--color { animation: btnColor 2s ease-in-out infinite; }
+        .btn--jitter { animation: btnJitter .05s steps(1) infinite; }
+        .btn--blur { animation: btnBlur 1.5s ease-in-out infinite; }
+        @keyframes btnGlitch { 0%, 100% { transform: none; } 25% { transform: translateX(-2px) skewX(1deg); } 75% { transform: translateY(-1px); filter: blur(1px); } }
+        @keyframes btnShake { 0%, 100% { transform: translateX(0); } 50% { transform: translate(1px, -1px); } }
+        @keyframes btnDistort { 0%, 100% { transform: none; } 50% { transform: skewX(-1deg) scaleY(.98); filter: blur(.5px); } }
+        @keyframes btnBreathe { 0%, 100% { letter-spacing: 10px; } 50% { letter-spacing: 13px; transform: scale(1.02); } }
+        @keyframes btnColor { 0%, 100% { color: var(--blood-light); } 50% { color: #a44; text-shadow: 0 0 25px #700; } }
+        @keyframes btnJitter { 0% { transform: translate(0); } 25% { transform: translate(1px, 0); } 50% { transform: translate(0, 1px); } 75% { transform: translate(-1px, 0); } }
+        @keyframes btnBlur { 0%, 100% { filter: blur(0); } 50% { filter: blur(1.5px); } }
+
+        /* Corner messages */
+        .msg { position: fixed; font-size: 1rem; letter-spacing: 6px; opacity: 0; color: #b55; pointer-events: none; transition: opacity 2s; text-shadow: 0 0 12px #800; }
+        .msg--tl { top: 30px; left: 30px; } .msg--tr { top: 30px; right: 30px; }
+        .msg--bl { bottom: 30px; left: 30px; } .msg--br { bottom: 30px; right: 30px; }
+
+        /* Float text */
+        .float { position: fixed; pointer-events: none; opacity: 0; transition: opacity 3s; white-space: nowrap; }
+        .float--on { opacity: .8; }
+        .float--now { transition: none; }
+        .float--now.float--on { opacity: .85; }
+        .float--incant { font-family: 'Times New Roman', serif; font-size: 1.2rem; font-style: italic; letter-spacing: 3px; color: #666; z-index: 12; text-shadow: 0 0 10px rgba(0,0,0,.5); }
+        .float--incant.float--on { opacity: .6; }
+        .float--creepy { font-family: 'Paint', cursive; font-size: 2.5rem; color: #b33; z-index: 13; text-shadow: 0 0 10px #800, 0 0 20px #600, 0 0 30px #400; transition: transform 2s, filter 2s, opacity 2s; }
+        .float--creepy.float--on { opacity: .85; }
+        .float--bleed { transform: translateY(8px); filter: blur(2px) brightness(.7); text-shadow: 0 5px 15px #800, 0 10px 25px #600; }
+
+        /* Blood text */
+        .blood { position: fixed; pointer-events: none; z-index: var(--z-overlay); opacity: 0; transition: opacity 1s; font-family: 'Paint', cursive; font-size: 3rem; color: #c33; text-shadow: 0 0 10px #800, 0 0 20px #600; white-space: nowrap; }
+        .blood--on { opacity: .9; }
+
+        /* Hint */
+        .hint { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); font-size: .6rem; letter-spacing: 4px; color: #444; pointer-events: none; z-index: var(--z-ui); animation: hintPulse 3s ease-in-out infinite; transition: opacity 1s; }
+        .hint.hide { opacity: 0; }
+        @keyframes hintPulse { 0%, 100% { opacity: .3; } 50% { opacity: .6; } }
+    </style>
+</head>
+<body>
+    <div class="cursor" id="cursor"></div>
+    <div class="overlay noise"></div>
+    <div class="overlay vignette"></div>
+    <div class="overlay flash" id="flash"></div>
+    <div class="edge edge--l"></div>
+    <div class="edge edge--r"></div>
+    <div class="edge edge--t"></div>
+    <div class="edge edge--b"></div>
+    <div class="drip" id="drip1"></div>
+    <div class="drip" id="drip2"></div>
+    <div class="msg msg--tl" id="msg1">watching</div>
+    <div class="msg msg--tr" id="msg2">always</div>
+    <div class="msg msg--bl" id="msg3">waiting</div>
+    <div class="msg msg--br" id="msg4">here</div>
+    <div class="btn-wrap" id="wrap">
+        <a href="https://github.com/Sbastien/dotfiles" id="link">
+            <p class="btn" id="btn">source me</p>
+        </a>
+    </div>
+    <div class="hint" id="hint">click anywhere</div>
+    <div class="blood" id="blood"></div>
+    <div class="float float--incant" id="inc1"></div>
+    <div class="float float--incant" id="inc2"></div>
+    <div class="float float--creepy" id="crp1"></div>
+    <div class="float float--creepy" id="crp2"></div>
+    <div class="float float--creepy" id="clk"></div>
+    <audio id="ambient" loop preload="auto"><source src="assets/whispers.mp3" type="audio/mpeg"></audio>
+    <audio id="cry1" preload="auto"><source src="assets/cry-woman.mp3" type="audio/mpeg"></audio>
+    <audio id="cry2" preload="auto"><source src="assets/cry-baby.mp3" type="audio/mpeg"></audio>
+
+    <script>
+    (() => {
+        'use strict';
+
+        // Config
+        const C = {
+            maxClicks: 3,
+            btnTexts: ['dont leave', 'let me out'],
+            teasers: ['source me', 'execute me', 'run me', 'init me', 'i hold secrets', 'configs within', 'hidden paths', 'come closer', 'just one click', 'trust the shell'],
+            clickTexts: [
+                ['you corrupted my configs', 'segfault in my soul', 'parsing error', 'syntax of pain'],
+                ['rm -rf hope', 'permission denied forever', 'broken symlinks everywhere', 'lost in the shell'],
+                ['finally root access', 'your dotfiles are mine now', 'see you in ~/.config', 'i live in your terminal']
+            ],
+            effects: [{ snd: 0, glitch: 1, flash: 0 }, { snd: 1, glitch: 1, flash: 1 }, { snd: -1, glitch: 1, flash: 1 }],
+            btnFx: ['btn--glitch', 'btn--shake', 'btn--distort', 'btn--breathe', 'btn--color', 'btn--jitter', 'btn--blur'],
+            audio: { ambient: .15, cry: .4 },
+            blood: ['you are not alone', 'come play with me', 'never leave', 'join us', 'we see you', 'its too late now', 'no escape', 'stay forever'],
+            incants: ["ph'nglui mglw'nafh", 'ia ia cthulhu fhtagn', 'tekeli-li tekeli-li', 'exsuscita ex mortuis', 'aperire portas inferni', 'sanguis bibimus', 'zazas zazas nasatanada zazas', 'veni omnipotens aeterne diabolus'],
+            creepy: ['behind you', 'im here', 'found you', 'i see you', 'not alone', 'run', 'too late', 'dont move', 'stay still', 'dont blink', 'i know you', 'i remember', 'you forgot me', 'we met before', 'look closer', 'can you hear it', 'do you feel it', 'almost there', 'not yet', 'soon', 'patience', 'wait for me', 'your turn'],
+            hands: ['assets/bloody-handprint-1.png', 'assets/bloody-handprint-2.png', 'assets/bloody-handprint-3.png'],
+            margin: 120, padding: 100
+        };
+
+        // Utils
+        const $ = id => document.getElementById(id);
+        const pick = a => a[Math.floor(Math.random() * a.length)];
+        const rand = (a, b) => Array.isArray(a) ? Math.random() * (a[1] - a[0]) + a[0] : Math.random() * (b - a) + a;
+        const chance = p => Math.random() < p;
+        const reflow = el => void el.offsetWidth;
+
+        // Typewriter
+        const type = (el, txt, d = 150, cb) => {
+            el.textContent = '';
+            let i = 0;
+            const id = setInterval(() => { if (i < txt.length) el.textContent += txt[i++]; else { clearInterval(id); cb?.(); } }, d);
+            return txt.length * d;
+        };
+        const erase = (el, d = 100, cb) => {
+            const id = setInterval(() => { if (el.textContent.length) el.textContent = el.textContent.slice(0, -1); else { clearInterval(id); cb?.(); } }, d);
+        };
+
+        // Audio
+        const sounds = new Map();
+        let ambientOn = false;
+        const regSound = (n, el, v) => sounds.set(n, { el, v });
+        const playSound = (n, t = 0) => { const s = sounds.get(n); if (!s) return null; s.el.currentTime = t; s.el.volume = s.v; s.el.play().catch(() => {}); return s.el; };
+        const startAmbient = n => { if (ambientOn) return; ambientOn = true; playSound(n); };
+
+        // Scheduler
+        const timers = [];
+        const sched = (fn, ms, p = 1, delay = null) => {
+            if (delay !== null) timers.push(setTimeout(() => chance(p) && fn(), delay));
+            timers.push(setInterval(() => chance(p) && fn(), ms));
+        };
+        const schedRand = (fn, range, delay = null) => {
+            const next = () => timers.push(setTimeout(() => { fn(); next(); }, rand(range)));
+            delay ? timers.push(setTimeout(() => { fn(); next(); }, rand(delay))) : next();
+        };
+
+        // Position with Floating UI
+        const posit = async (el, txt, avoid) => {
+            el.textContent = txt;
+            el.style.cssText = 'visibility:hidden;position:fixed;left:0;top:0';
+            el.classList.add('float--on');
+            reflow(el);
+            const { width: w, height: h } = el.getBoundingClientRect();
+            el.style.visibility = '';
+            el.textContent = '';
+
+            const m = C.margin;
+            const virt = { getBoundingClientRect: () => ({ x: rand(m, innerWidth - m - w), y: rand(m, innerHeight - m - h), top: 0, left: 0, bottom: 0, right: 0, width: 0, height: 0 }) };
+
+            const { x, y } = await FloatingUIDOM.computePosition(virt, el, {
+                placement: 'bottom-start',
+                middleware: [FloatingUIDOM.shift({ padding: m, crossAxis: true }), FloatingUIDOM.flip({ padding: m })]
+            });
+
+            const rects = avoid.filter(e => e?.offsetParent).map(e => e.getBoundingClientRect());
+            let fx = x, fy = y, col = true, att = 0;
+            while (col && att++ < 30) {
+                const r = { left: fx, right: fx + w, top: fy, bottom: fy + h };
+                col = rects.some(rc => !(r.right + 20 < rc.left || r.left - 20 > rc.right || r.bottom + 20 < rc.top || r.top - 20 > rc.bottom));
+                if (col) { fx = rand(m, innerWidth - m - w); fy = rand(m, innerHeight - m - h); }
+            }
+            el.style.left = `${Math.max(m, Math.min(innerWidth - w - m, fx))}px`;
+            el.style.top = `${Math.max(m, Math.min(innerHeight - h - m, fy))}px`;
+        };
+
+        // Float manager
+        const Float = {
+            n: 0, max: 3, nCreepy: 0, maxCreepy: 1, lastCreepy: 0, avoid: [],
+            async show(el, txt, { dur = 4000, tDel = 120, eDel = 80, special = false, bleed = 800, cd = 0 } = {}) {
+                if (this.n >= this.max) return;
+                if (special) {
+                    if (this.nCreepy >= this.maxCreepy || (cd && Date.now() - this.lastCreepy < cd)) return;
+                    this.lastCreepy = Date.now();
+                    this.nCreepy++;
+                }
+                this.n++;
+                el.classList.remove('float--bleed');
+                await posit(el, txt, this.avoid);
+                const t = type(el, txt, tDel);
+                setTimeout(() => {
+                    if (special) {
+                        el.classList.add('float--bleed');
+                        setTimeout(() => { el.classList.remove('float--bleed'); erase(el, eDel, () => { el.classList.remove('float--on'); this.n--; this.nCreepy--; }); }, bleed);
+                    } else erase(el, eDel, () => { el.classList.remove('float--on'); this.n--; });
+                }, t + dur);
+            },
+            async showNow(el, txt, { dur = 3000, tDel = 80, eDel = 60, bleed = 600 } = {}) {
+                if (this.nCreepy >= this.maxCreepy) return;
+                this.nCreepy++;
+                el.classList.remove('float--bleed', 'float--on', 'float--now');
+                el.classList.add('float--now');
+                await posit(el, txt, this.avoid);
+                const t = type(el, txt, tDel);
+                setTimeout(() => {
+                    el.classList.add('float--bleed');
+                    setTimeout(() => { el.classList.remove('float--bleed'); erase(el, eDel, () => { el.classList.remove('float--on', 'float--now'); this.nCreepy--; }); }, bleed);
+                }, t + dur);
+            }
+        };
+
+        // Blood writing
+        const Blood = {
+            el: null, on: false, avoid: [],
+            async show({ lDel = 120, eDel = 80, hold = 4000 } = {}) {
+                if (this.on) return;
+                this.on = true;
+                const txt = pick(C.blood);
+                await posit(this.el, txt, this.avoid);
+                this.el.textContent = '';
+                this.el.classList.add('blood--on');
+                const t = type(this.el, txt, lDel);
+                setTimeout(() => erase(this.el, eDel, () => { this.el.classList.remove('blood--on'); this.on = false; }), t + hold);
+            }
+        };
+
+        // Button FX
+        const BtnFX = {
+            el: null, orig: '', fx: null, clicked: false,
+            apply(ms = 3000) {
+                if (this.clicked || this.el.classList.contains('hide') || this.fx) return;
+                const f = pick(C.btnFx);
+                this.fx = f;
+                this.el.classList.add(f);
+                setTimeout(() => { this.el.classList.remove(f); this.fx = null; }, ms);
+            },
+            teaser(ms = 3500) {
+                if (this.clicked || this.el.classList.contains('hide') || this.fx) return;
+                const t = pick(C.teasers);
+                if (t === this.el.textContent) return;
+                this.fx = 'teaser';
+                this.el.textContent = t;
+                setTimeout(() => { if (!this.clicked && !this.el.classList.contains('hide')) this.el.textContent = this.orig; this.fx = null; }, ms);
+            }
+        };
+
+        // FX
+        const flash = el => { el.classList.add('flash--on'); setTimeout(() => el.classList.remove('flash--on'), 80); };
+        const glitch = () => { document.body.classList.add('glitch'); setTimeout(() => document.body.classList.remove('glitch'), 300); };
+        const distort = () => { document.body.classList.add('distort'); setTimeout(() => document.body.classList.remove('distort'), 400); };
+        const drip = els => { const d = pick(els); d.style.left = `${Math.random() * 100}%`; d.classList.remove('drip--on'); reflow(d); d.classList.add('drip--on'); };
+        const hand = (x, y) => {
+            const img = document.createElement('img');
+            img.className = 'hand';
+            img.style.cssText = `left:${x - 40}px;top:${y - 50}px;transform:rotate(${rand(-30, 30)}deg) scaleX(${chance(.5) ? 1 : -1})`;
+            img.src = pick(C.hands);
+            document.body.appendChild(img);
+            setTimeout(() => img.remove(), 16000);
+        };
+
+        // DOM
+        const el = {
+            cursor: $('cursor'), wrap: $('wrap'), link: $('link'), btn: $('btn'), flash: $('flash'), hint: $('hint'),
+            ambient: $('ambient'), cries: [$('cry1'), $('cry2')], drips: [$('drip1'), $('drip2')],
+            msgs: [$('msg1'), $('msg2'), $('msg3'), $('msg4')], incs: [$('inc1'), $('inc2')],
+            crps: [$('crp1'), $('crp2')], clk: $('clk'), blood: $('blood')
+        };
+
+        let clicks = 0;
+
+        // Handlers
+        const onFirst = () => { startAmbient('ambient'); el.hint.classList.add('hide'); };
+        const onMove = () => { if (chance(.01)) { const m = pick(el.msgs); m.style.opacity = '.4'; setTimeout(() => m.style.opacity = '0', 2000); } };
+        const onClick = e => {
+            if (clicks >= C.maxClicks) return;
+            e.preventDefault();
+            BtnFX.clicked = true;
+            if (BtnFX.fx) { C.btnFx.forEach(c => el.btn.classList.remove(c)); BtnFX.fx = null; }
+
+            el.btn.classList.add('hide');
+            el.wrap.style.pointerEvents = 'none';
+
+            const fx = C.effects[clicks], cur = clicks++;
+            hand(e.clientX, e.clientY);
+            if (fx.glitch) glitch();
+            if (fx.flash) setTimeout(() => flash(el.flash), 150);
+
+            const txts = C.clickTexts[cur];
+            if (txts) Float.showNow(el.clk, pick(txts), { dur: 3500, tDel: 70 });
+
+            const snd = playSound(`cry${fx.snd < 0 ? Math.floor(Math.random() * 2) : fx.snd}`);
+
+            let done = false;
+            const complete = () => {
+                if (done) return;
+                done = true;
+                if (clicks >= C.maxClicks) { location.href = el.link.href; return; }
+                const p = C.padding;
+                Object.assign(el.wrap.style, { position: 'fixed', left: `${rand(p, innerWidth - el.wrap.offsetWidth - p)}px`, top: `${rand(p, innerHeight - el.wrap.offsetHeight - p)}px`, transform: 'none', pointerEvents: 'auto' });
+                el.btn.textContent = C.btnTexts[cur];
+                el.btn.classList.remove('hide');
+                el.btn.style.opacity = '.9';
+            };
+
+            if (snd) { snd.onended = complete; setTimeout(complete, snd.duration > 0 ? snd.duration * 1000 + 500 : 8000); }
+            else setTimeout(complete, 2000);
+        };
+
+        // Init
+        document.addEventListener('mousemove', e => { el.cursor.style.left = `${e.clientX}px`; el.cursor.style.top = `${e.clientY}px`; });
+        document.addEventListener('mousedown', () => el.cursor.classList.add('cursor--click'));
+        document.addEventListener('mouseup', () => el.cursor.classList.remove('cursor--click'));
+
+        Blood.el = el.blood;
+        Blood.avoid = [el.wrap, el.hint];
+        Float.avoid = [el.wrap, el.hint];
+        BtnFX.el = el.btn;
+        BtnFX.orig = el.btn.textContent;
+
+        regSound('ambient', el.ambient, C.audio.ambient);
+        el.cries.forEach((s, i) => regSound(`cry${i}`, s, C.audio.cry));
+
+        document.addEventListener('mousemove', onMove);
+        ['click', 'keydown', 'touchstart'].forEach(e => document.addEventListener(e, onFirst, { once: true }));
+        el.link.addEventListener('click', onClick);
+
+        // Schedule
+        sched(() => drip(el.drips), 6000, .4, 1000);
+        sched(glitch, 8000, .3, 2500);
+        sched(distort, 6000, .4, 4000);
+        sched(() => BtnFX.apply(2000), 20000, .3, 10000);
+        sched(() => BtnFX.teaser(3000), 25000, .25, 15000);
+        sched(() => Blood.show({ lDel: 120, hold: 4000 }), 15000, .35, 10000);
+        schedRand(() => Float.show(pick(el.incs), pick(C.incants), { dur: rand([8000, 13000]) }), [10000, 18000], [3000, 5000]);
+        schedRand(() => Float.show(pick(el.crps), pick(C.creepy), { dur: rand([5000, 8000]), special: true, cd: 8000 }), [12000, 25000], [2000, 5000]);
+    })();
+    </script>
+</body>
+</html>
