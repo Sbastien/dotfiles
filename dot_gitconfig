@@ -25,6 +25,9 @@
 [merge]
     conflictstyle = zdiff3
 
+[rerere]
+    enabled = true
+
 [pull]
     rebase = true
 
