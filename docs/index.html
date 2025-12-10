@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>dotfiles</title>
-    <meta name="description" content="Personal dotfiles configuration">
+    <meta name="description" content="macOS dotfiles · Zsh + Oh My Zsh + Starship · Neovim · Modern CLI tools · chezmoi">
     <meta name="theme-color" content="#21252b">
     <style>
         /* Reset & Variables */
@@ -21,11 +21,12 @@
             --fg-dim: #5c6370;
             --bg: #282c34;
             --bg-dark: #21252b;
+            --bg-lighter: #2c323c;
         }
 
         /* Layout */
         body {
-            font-family: 'SF Mono', Monaco, Consolas, 'Fira Code', monospace;
+            font-family: 'SF Mono', 'Fira Code', Monaco, Consolas, monospace;
             background: var(--bg-dark);
             color: var(--fg);
             min-height: 100dvh;
@@ -37,65 +38,123 @@
         .container {
             padding: 2rem;
             width: 100%;
-            max-width: 750px;
+            max-width: 800px;
         }
 
         /* Terminal */
         .terminal {
             background: var(--bg);
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.06),
+                0 8px 32px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .terminal:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.1),
+                0 16px 48px rgba(0,0,0,0.6);
         }
 
         .terminal__bar {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 12px 16px;
+            padding: 14px 18px;
             background: var(--bg-dark);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            user-select: none;
+        }
+
+        .terminal__dots {
+            display: flex;
+            gap: 8px;
         }
 
         .terminal__dot {
             width: 12px;
             height: 12px;
             border-radius: 50%;
+            transition: opacity 0.2s;
         }
+
         .terminal__dot--red { background: #ff5f56; }
         .terminal__dot--yellow { background: #ffbd2e; }
         .terminal__dot--green { background: #27ca40; }
 
+        .terminal__dots:hover .terminal__dot { opacity: 0.8; }
+
         .terminal__title {
             flex: 1;
             text-align: center;
-            font-size: 0.75rem;
-            color: #666;
+            font-size: 0.72rem;
+            color: var(--fg-dim);
             margin-right: 52px;
+            letter-spacing: 0.02em;
         }
 
         .terminal__body {
             padding: 1.5rem;
-            max-height: 70vh;
+            max-height: 65vh;
+            min-height: 400px;
             overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .terminal__body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .terminal__body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .terminal__body::-webkit-scrollbar-thumb {
+            background: var(--bg-lighter);
+            border-radius: 4px;
+        }
+
+        .terminal__body::-webkit-scrollbar-thumb:hover {
+            background: var(--fg-dim);
         }
 
         /* Logo */
         .logo {
-            font-size: clamp(0.5rem, 1.8vw, 0.85rem);
-            line-height: 1.25;
+            font-size: clamp(0.45rem, 1.6vw, 0.8rem);
+            line-height: 1.2;
             white-space: pre;
             margin-bottom: 1.5rem;
             color: var(--cyan);
-            text-shadow: 0 0 20px rgba(86,182,194,0.3);
+            text-shadow: 0 0 30px rgba(86,182,194,0.25);
+            opacity: 0;
+            animation: fadeIn 0.6s ease forwards;
         }
 
         /* Output */
         .line {
             font-size: 0.8rem;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.5rem;
             white-space: pre-wrap;
             word-break: break-word;
+            line-height: 1.5;
+            animation: slideIn 0.2s ease forwards;
+        }
+
+        .line.instant {
+            animation: none;
+            opacity: 1;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
         }
 
         /* Input */
@@ -104,7 +163,14 @@
             align-items: center;
             gap: 0.5rem;
             font-size: 0.8rem;
-            margin-top: 0.5rem;
+            margin-top: 0.75rem;
+            padding: 0.5rem 0;
+        }
+
+        .input-line__os {
+            color: var(--fg);
+            flex-shrink: 0;
+            opacity: 0.7;
         }
 
         .input-line__path {
@@ -119,11 +185,12 @@
         .input-line__chevron {
             color: var(--green);
             font-weight: bold;
+            transition: color 0.2s;
         }
 
-        .input-line__os {
-            color: var(--fg);
-            flex-shrink: 0;
+        .input-line:focus-within .input-line__chevron {
+            color: var(--cyan);
+            text-shadow: 0 0 8px rgba(86,182,194,0.5);
         }
 
         #input {
@@ -133,17 +200,28 @@
             color: var(--fg);
             font: inherit;
             outline: none;
+            caret-color: var(--cyan);
+        }
+
+        #input::placeholder {
+            color: var(--fg-dim);
+            opacity: 0.5;
+        }
+
+        #input:disabled {
+            opacity: 0.5;
         }
 
         /* Status bar */
         .status {
             display: flex;
             justify-content: space-between;
-            padding: 8px 16px;
+            align-items: center;
+            padding: 10px 18px;
             font-size: 0.65rem;
             color: var(--fg-dim);
             background: var(--bg-dark);
-            border-top: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(255,255,255,0.04);
         }
 
         .status__item {
@@ -157,36 +235,60 @@
             height: 6px;
             background: var(--green);
             border-radius: 50%;
-            animation: pulse 2s infinite;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status__hint {
+            opacity: 0.6;
+        }
+
+        .status__hint kbd {
+            background: var(--bg-lighter);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            margin: 0 2px;
         }
 
         /* Syntax colors */
-        .prompt { color: var(--green); }
         .cmd { color: var(--fg); }
         .out { color: #7f848e; }
         .err { color: var(--red); }
         .file { color: var(--fg); }
         .dir { color: var(--blue); font-weight: 600; }
         .exec { color: var(--green); }
-        .comment { color: var(--fg-dim); }
+        .comment { color: var(--fg-dim); font-style: italic; }
         .key { color: var(--red); }
-        .value { color: var(--green); }
         .string { color: var(--yellow); }
         .section { color: var(--blue); }
         .cyan { color: var(--cyan); }
         .green { color: var(--green); }
         .yellow { color: var(--yellow); }
-        .red { color: var(--red); }
-        .blue { color: var(--blue); }
-        .magenta { color: var(--magenta); }
-        .a { color: var(--blue); text-decoration: none; }
-        .a:hover { text-decoration: underline; }
+        .a { color: var(--cyan); text-decoration: none; transition: opacity 0.2s; }
+        .a:hover { opacity: 0.8; text-decoration: underline; }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--fg-dim);
+            border-top-color: var(--cyan);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
         /* GitHub button */
         .github-corner {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 24px;
+            right: 24px;
             z-index: 100;
         }
 
@@ -194,14 +296,15 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 16px;
-            background: var(--bg);
+            padding: 10px 18px;
+            background: rgba(40,44,52,0.9);
+            backdrop-filter: blur(10px);
             color: var(--fg);
             font-size: 0.75rem;
             text-decoration: none;
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.2s;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.25s ease;
         }
 
         .github-corner a:hover {
@@ -209,31 +312,41 @@
             color: var(--bg-dark);
             border-color: var(--cyan);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(86,182,194,0.3);
+            box-shadow: 0 8px 20px rgba(86,182,194,0.3);
         }
 
         .github-corner svg {
             width: 18px;
             height: 18px;
+            transition: transform 0.25s;
+        }
+
+        .github-corner a:hover svg {
+            transform: rotate(360deg);
         }
 
         /* Animations */
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.95); }
         }
 
         /* Responsive */
         @media (max-width: 600px) {
             .container { padding: 1rem; }
-            .terminal__body { padding: 1rem; }
-            .logo { font-size: 0.4rem; }
-            .line, .input-line { font-size: 0.7rem; }
+            .terminal__body { padding: 1rem; min-height: 300px; }
+            .logo { font-size: 0.35rem; }
+            .line, .input-line { font-size: 0.75rem; }
             .github-corner { display: none; }
+            .status__hint { display: none; }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            * { animation: none !important; }
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
@@ -241,16 +354,18 @@
     <div class="github-corner">
         <a href="https://github.com/Sbastien/dotfiles" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-            GitHub
+            View on GitHub
         </a>
     </div>
 
     <main class="container">
         <div class="terminal" id="terminal">
             <div class="terminal__bar">
-                <div class="terminal__dot terminal__dot--red"></div>
-                <div class="terminal__dot terminal__dot--yellow"></div>
-                <div class="terminal__dot terminal__dot--green"></div>
+                <div class="terminal__dots">
+                    <div class="terminal__dot terminal__dot--red"></div>
+                    <div class="terminal__dot terminal__dot--yellow"></div>
+                    <div class="terminal__dot terminal__dot--green"></div>
+                </div>
                 <div class="terminal__title" id="title">zsh — ~</div>
             </div>
 
@@ -263,17 +378,18 @@
 
                 <div id="output"></div>
 
-                <div class="input-line">
-                    <svg class="input-line__os" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                <div class="input-line" id="input-line">
+                    <svg class="input-line__os" viewBox="0 0 24 24" width="14" height="14"><path id="apple-path" fill="currentColor"/></svg>
                     <span class="input-line__path" id="prompt-path">~</span>
                     <span class="input-line__branch"> main</span>
                     <span class="input-line__chevron">❯</span>
-                    <input type="text" id="input" autofocus autocomplete="off" spellcheck="false">
+                    <input type="text" id="input" placeholder="type a command..." autocomplete="off" spellcheck="false">
                 </div>
             </div>
 
             <div class="status">
                 <span class="status__item"><span class="status__dot"></span> <span id="cwd">~</span></span>
+                <span class="status__hint"><kbd>Tab</kbd> autocomplete · <kbd>↑↓</kbd> history</span>
                 <span class="status__item">zsh</span>
             </div>
         </div>
@@ -281,7 +397,6 @@
 
     <script>
         (() => {
-            // DOM
             const $ = id => document.getElementById(id);
             const input = $('input');
             const output = $('output');
@@ -290,23 +405,24 @@
             const titleEl = $('title');
             const promptPath = $('prompt-path');
 
-            // Config
             const REPO = 'Sbastien/dotfiles';
             const API = `https://api.github.com/repos/${REPO}/contents`;
+            const APPLE_PATH = 'M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z';
+            const APPLE_SVG = `<svg style="color:var(--fg);vertical-align:middle;opacity:0.7" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="${APPLE_PATH}"/></svg>`;
 
-            // State
             const cache = new Map();
             const history = [];
             let cwd = [];
             let historyIndex = -1;
 
-            // API
+            const displayPath = () => cwd.length ? `~/${cwd.join('/')}` : '~';
+
             const api = async (url) => {
                 const res = await fetch(url);
                 if (res.status === 403) {
                     const reset = res.headers.get('X-RateLimit-Reset');
                     const mins = reset ? Math.ceil((reset * 1000 - Date.now()) / 60000) : '?';
-                    throw new Error(`rate limit (resets in ${mins}min)`);
+                    throw new Error(`rate limit exceeded (resets in ${mins}min)`);
                 }
                 if (!res.ok) throw new Error('not found');
                 return res.json();
@@ -339,31 +455,42 @@
                 }
             };
 
-            // Helpers
             const getPath = () => cwd.join('/');
 
             const updateCwd = () => {
-                const path = cwd.length ? `~/${cwd.join('/')}` : '~';
+                const path = displayPath();
                 cwdEl.textContent = path;
                 titleEl.textContent = `zsh — ${path}`;
                 promptPath.textContent = path;
             };
 
-            const addLine = (content) => {
+            const addLine = (content, instant = false) => {
                 if (content === null) return;
                 const line = document.createElement('div');
-                line.className = 'line';
+                line.className = instant ? 'line instant' : 'line';
                 line.innerHTML = content;
                 output.appendChild(line);
                 body.scrollTop = body.scrollHeight;
             };
 
             const addCmd = (cmd) => {
-                const path = cwd.length ? `~/${cwd.join('/')}` : '~';
-                addLine(`<svg style="color:var(--fg);vertical-align:middle" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> <span class="yellow">${path}</span> <span class="cyan"> main</span> <span class="green">❯</span> <span class="cmd">${cmd}</span>`);
+                addLine(`${APPLE_SVG} <span class="yellow">${displayPath()}</span> <span class="cyan"> main</span> <span class="green">❯</span> <span class="cmd">${cmd}</span>`, true);
             };
 
-            // Syntax highlighting
+            const showLoading = () => {
+                const el = document.createElement('div');
+                el.className = 'line';
+                el.id = 'loading';
+                el.innerHTML = '<span class="spinner"></span><span class="comment">loading...</span>';
+                output.appendChild(el);
+                body.scrollTop = body.scrollHeight;
+            };
+
+            const hideLoading = () => {
+                const el = $('loading');
+                if (el) el.remove();
+            };
+
             const highlight = (content, filename) => {
                 const esc = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 const ext = filename.split('.').pop();
@@ -393,47 +520,46 @@
                 return result;
             };
 
-            // Fun responses
             const jokes = [
-                "segmentation fault (core dumped)",
+                "command not found. try 'help'",
                 "works on my machine ¯\\_(ツ)_/¯",
-                "it's not a bug, it's a feature",
-                "task failed successfully",
-                "there's no place like 127.0.0.1",
-                "// I have no idea why this works",
-                "404 brain not found",
-                "[Object object]",
-                "undefined is not a function",
-                "TODO: fix this later",
+                "that's not how this works...",
+                "404 command not found",
+                "nice try!",
+                "nope.",
+                "undefined behavior",
             ];
 
-            // Commands
+            const icons = {
+                dir: '', md: '', txt: '', lua: '', vim: '',
+                zsh: '', sh: '', bash: '', toml: '', json: '',
+                yaml: '', yml: '', js: '', ts: '', html: '',
+                css: '', git: '', gitconfig: '', gitignore: '', default: ''
+            };
+
+            const getIcon = (item) => {
+                if (item.type === 'dir') return icons.dir;
+                const name = item.name.toLowerCase();
+                if (name.includes('gitconfig') || name.includes('gitignore')) return icons.git;
+                return icons[name.split('.').pop()] || icons.default;
+            };
+
             const commands = {
-                help: async () => `<span class="out">commands: ls, cd, cat, pwd, clear, tree, whoami, neofetch, github</span>`,
+                help: async () => `<span class="out">Available commands:</span>
+<span class="cyan">  ls</span>        list files
+<span class="cyan">  cd</span>        change directory
+<span class="cyan">  cat</span>       view file contents
+<span class="cyan">  tree</span>      show directory tree
+<span class="cyan">  pwd</span>       print working directory
+<span class="cyan">  clear</span>     clear terminal
+<span class="cyan">  neofetch</span>  system info
+<span class="cyan">  github</span>    open repository
+<span class="cyan">  fork</span>      fork this repo`,
 
-                ls: async () => {
-                    const data = await fetchDir(getPath());
-                    if (!data) return `<span class="err">error: could not fetch</span>`;
-
-                    const icons = {
-                        dir: '',
-                        md: '', txt: '',
-                        lua: '', vim: '',
-                        zsh: '', sh: '', bash: '',
-                        toml: '', json: '', yaml: '', yml: '',
-                        js: '', ts: '',
-                        html: '', css: '',
-                        git: '', gitconfig: '', gitignore: '',
-                        default: ''
-                    };
-
-                    const getIcon = (item) => {
-                        if (item.type === 'dir') return icons.dir;
-                        const name = item.name.toLowerCase();
-                        if (name.includes('gitconfig') || name.includes('gitignore')) return icons.git;
-                        const ext = name.split('.').pop();
-                        return icons[ext] || icons.default;
-                    };
+                ls: async (arg) => {
+                    const path = arg ? (cwd.length ? `${getPath()}/${arg}` : arg) : getPath();
+                    const data = await fetchDir(path);
+                    if (!data) return `<span class="err">ls: cannot access '${arg || '.'}': No such file or directory</span>`;
 
                     const sorted = [...data].sort((a, b) => {
                         if (a.type === b.type) return a.name.localeCompare(b.name);
@@ -451,25 +577,27 @@
                 cd: async (arg) => {
                     if (!arg || arg === '~' || arg === '/') { cwd = []; updateCwd(); return null; }
                     if (arg === '..') { if (cwd.length) cwd.pop(); updateCwd(); return null; }
+                    if (arg === '-') { return `<span class="out">~</span>`; }
                     const path = cwd.length ? `${getPath()}/${arg}` : arg;
                     const data = await fetchDir(path);
                     if (data && Array.isArray(data)) { cwd.push(arg); updateCwd(); return null; }
-                    return `<span class="err">cd: ${arg}: not a directory</span>`;
+                    return `<span class="err">cd: ${arg}: No such directory</span>`;
                 },
 
                 cat: async (arg) => {
-                    if (!arg) return `<span class="err">cat: missing filename</span>`;
+                    if (!arg) return `<span class="err">cat: missing operand</span>`;
                     const path = cwd.length ? `${getPath()}/${arg}` : arg;
                     const content = await fetchFile(path);
-                    return content !== null ? highlight(content, arg) : `<span class="err">cat: ${arg}: not found</span>`;
+                    return content !== null ? highlight(content, arg) : `<span class="err">cat: ${arg}: No such file</span>`;
                 },
 
-                pwd: async () => `<span class="out">/home/user/dotfiles${cwd.length ? '/' + cwd.join('/') : ''}</span>`,
+                pwd: async () => `<span class="out">/home/guest/dotfiles${cwd.length ? '/' + cwd.join('/') : ''}</span>`,
 
                 clear: async () => { output.innerHTML = ''; return null; },
 
                 tree: async () => {
-                    const build = async (path, prefix = '') => {
+                    const build = async (path, prefix = '', depth = 0) => {
+                        if (depth > 3) return '<span class="comment">  ...</span>\n';
                         const data = await fetchDir(path);
                         if (!data?.length) return '';
                         const sorted = [...data].sort((a, b) => a.type === b.type ? a.name.localeCompare(b.name) : a.type === 'dir' ? -1 : 1);
@@ -477,87 +605,116 @@
                         for (let i = 0; i < sorted.length; i++) {
                             const item = sorted[i];
                             const last = i === sorted.length - 1;
-                            const icon = item.type === 'dir' ? `<span class="dir">${item.name}/</span>` : `<span class="file">${item.name}</span>`;
-                            out += `${prefix}${last ? '└── ' : '├── '}${icon}\n`;
-                            if (item.type === 'dir') out += await build(path ? `${path}/${item.name}` : item.name, prefix + (last ? '    ' : '│   '));
+                            const name = item.type === 'dir' ? `<span class="dir">${item.name}/</span>` : `<span class="file">${item.name}</span>`;
+                            out += `${prefix}${last ? '└── ' : '├── '}${name}\n`;
+                            if (item.type === 'dir') {
+                                out += await build(path ? `${path}/${item.name}` : item.name, prefix + (last ? '    ' : '│   '), depth + 1);
+                            }
                         }
                         return out;
                     };
-                    addLine(`<span class="out">fetching...</span>`);
-                    return `<span class="dir">.</span>\n${(await build(getPath())).trimEnd()}`;
+                    return `<pre style="margin:0;line-height:1.3"><span class="dir">.</span>\n${(await build(getPath())).trimEnd()}</pre>`;
                 },
 
                 whoami: async () => `<span class="out">guest</span>`,
 
                 github: async () => {
                     window.open(`https://github.com/${REPO}`, '_blank');
-                    return `<span class="out">→ <a href="https://github.com/${REPO}" class="a" target="_blank">github.com/${REPO}</a></span>`;
+                    return `<span class="out">Opening <a href="https://github.com/${REPO}" class="a" target="_blank">github.com/${REPO}</a>...</span>`;
+                },
+
+                fork: async () => {
+                    window.open(`https://github.com/${REPO}/fork`, '_blank');
+                    return `<span class="out">Opening fork page... <a href="https://github.com/${REPO}/fork" class="a" target="_blank">github.com/${REPO}/fork</a></span>`;
                 },
 
                 neofetch: async () => {
-                    let stars = '?', updated = '?';
+                    let stars = '?', updated = '?', forks = '?';
                     try {
                         const res = await fetch(`https://api.github.com/repos/${REPO}`);
                         if (res.ok) {
                             const data = await res.json();
                             stars = data.stargazers_count;
-                            const date = new Date(data.pushed_at);
-                            updated = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                            forks = data.forks_count;
+                            updated = new Date(data.pushed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                         }
                     } catch (e) {}
 
-                    const apple = `<svg viewBox="0 0 24 24" width="80" height="80" style="vertical-align:middle;margin-right:16px">
+                    const logo = `<svg viewBox="0 0 24 24" width="72" height="72" style="flex-shrink:0">
                         <defs><linearGradient id="g" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" style="stop-color:#61afef"/><stop offset="20%" style="stop-color:#56b6c2"/>
-                            <stop offset="40%" style="stop-color:#98c379"/><stop offset="60%" style="stop-color:#e5c07b"/>
-                            <stop offset="80%" style="stop-color:#e06c75"/><stop offset="100%" style="stop-color:#c678dd"/>
+                            <stop offset="0%" stop-color="#61afef"/><stop offset="25%" stop-color="#56b6c2"/>
+                            <stop offset="50%" stop-color="#98c379"/><stop offset="75%" stop-color="#e5c07b"/>
+                            <stop offset="100%" stop-color="#e06c75"/>
                         </linearGradient></defs>
                         <path fill="url(#g)" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                     </svg>`;
 
-                    const info = [
-                        `<span class="out">guest</span>@<span class="cyan">dotfiles</span>`,
-                        `────────────────`,
-                        `<span class="key">OS</span>       <span class="out">macOS</span>`,
-                        `<span class="key">Shell</span>    <span class="out">zsh + oh-my-zsh</span>`,
-                        `<span class="key">Prompt</span>   <span class="out">starship</span>`,
-                        `<span class="key">Editor</span>   <span class="out">neovim</span>`,
-                        `<span class="key">Tools</span>    <span class="out">bat, eza, fd, rg, fzf</span>`,
-                        ``,
-                        `<span class="key">Repo</span>     <span class="out">${REPO}</span>`,
-                        `<span class="key">Stars</span>    <span class="out">${stars}</span>`,
-                        `<span class="key">Updated</span>  <span class="out">${updated}</span>`,
-                    ].join('<br>');
+                    const info = `<span class="out">guest</span>@<span class="cyan">dotfiles</span>
+<span class="fg-dim">─────────────────</span>
+<span class="key">OS</span>        <span class="out">macOS</span>
+<span class="key">Shell</span>     <span class="out">zsh + oh-my-zsh</span>
+<span class="key">Prompt</span>    <span class="out">starship</span>
+<span class="key">Editor</span>    <span class="out">neovim</span>
+<span class="key">Tools</span>     <span class="out">bat, eza, fd, rg, fzf</span>
+<span class="key">Manager</span>   <span class="out">chezmoi</span>
 
-                    return `<div style="display:flex;align-items:center">${apple}<div>${info}</div></div>`;
+<span class="key">Repo</span>      <span class="out">${REPO}</span>
+<span class="key">Stars</span>     <span class="out">⭐ ${stars}</span>
+<span class="key">Forks</span>     <span class="out">🍴 ${forks}</span>
+<span class="key">Updated</span>   <span class="out">${updated}</span>`;
+
+                    return `<div style="display:flex;align-items:flex-start;gap:20px">${logo}<div style="line-height:1.6">${info}</div></div>`;
                 },
+
+                echo: async (arg) => `<span class="out">${arg || ''}</span>`,
+
+                date: async () => `<span class="out">${new Date().toLocaleString()}</span>`,
             };
 
-            // Input handler
+            // Aliases
+            commands.ll = commands.ls;
+            commands.la = commands.ls;
+
+            const exec = async (line) => {
+                const [cmd, ...rest] = line.trim().split(/\s+/);
+                const arg = rest.join(' ');
+
+                if (!cmd) return null;
+
+                const fn = commands[cmd.toLowerCase()];
+                if (fn) return await fn(arg);
+
+                return `<span class="err">${jokes[Math.random() * jokes.length | 0]}</span>`;
+            };
+
             input.addEventListener('keydown', async (e) => {
                 if (e.key === 'Enter') {
                     const line = input.value.trim();
-                    const [cmd, ...rest] = line.split(' ');
-                    const arg = rest.join(' ');
 
                     if (line) {
                         history.push(line);
                         historyIndex = history.length;
                         addCmd(line);
+                        input.value = '';
                         input.disabled = true;
 
+                        const needsLoading = ['tree', 'cat', 'ls'].some(c => line.startsWith(c));
+                        if (needsLoading) showLoading();
+
                         try {
-                            const fn = commands[cmd];
-                            const result = fn ? await fn(arg) : `<span class="err">${jokes[Math.random() * jokes.length | 0]}</span>`;
+                            const result = await exec(line);
+                            hideLoading();
                             if (result) addLine(result);
                         } catch (e) {
+                            hideLoading();
                             addLine(`<span class="err">error: ${e.message}</span>`);
                         }
 
                         input.disabled = false;
                         input.focus();
+                    } else {
+                        addCmd('');
                     }
-                    input.value = '';
                 } else if (e.key === 'ArrowUp') {
                     e.preventDefault();
                     if (historyIndex > 0) input.value = history[--historyIndex];
@@ -566,28 +723,56 @@
                     input.value = historyIndex < history.length - 1 ? history[++historyIndex] : (historyIndex = history.length, '');
                 } else if (e.key === 'Tab') {
                     e.preventDefault();
-                    const parts = input.value.trim().split(' ');
+                    const parts = input.value.split(/\s+/);
                     const partial = parts.pop();
-                    const data = await fetchDir(getPath());
-                    const match = data?.find(i => i.name.startsWith(partial));
-                    if (match) input.value = [...parts, match.name].join(' ');
+                    if (!partial) return;
+
+                    try {
+                        // Split path to get directory and file/folder to complete
+                        const pathParts = partial.split('/');
+                        const toComplete = pathParts.pop();
+                        const parentPath = pathParts.join('/');
+
+                        // Build full path to search in
+                        let searchPath = getPath();
+                        if (parentPath) {
+                            searchPath = searchPath ? `${searchPath}/${parentPath}` : parentPath;
+                        }
+
+                        const data = await fetchDir(searchPath);
+                        const matches = data?.filter(i => i.name.toLowerCase().startsWith(toComplete.toLowerCase()));
+
+                        if (matches?.length === 1) {
+                            const completed = parentPath
+                                ? `${parentPath}/${matches[0].name}`
+                                : matches[0].name;
+                            input.value = [...parts, completed + (matches[0].type === 'dir' ? '/' : '')].join(' ');
+                        } else if (matches?.length > 1) {
+                            addLine(`<span class="comment">${matches.map(m => m.type === 'dir' ? m.name + '/' : m.name).join('  ')}</span>`);
+                        }
+                    } catch (e) {}
+                } else if (e.key === 'l' && e.ctrlKey) {
+                    e.preventDefault();
+                    output.innerHTML = '';
                 }
             });
 
-            $('terminal').addEventListener('click', () => input.focus());
+            $('terminal').addEventListener('click', (e) => {
+                if (e.target.tagName !== 'A') input.focus();
+            });
 
-            // Boot sequence
-            const boot = async () => {
-                const delay = ms => new Promise(r => setTimeout(r, ms));
-                addLine('<span class="comment">booting...</span>');
-                await delay(400);
-                addLine('<span class="comment">loading dotfiles from github.com/Sbastien/dotfiles</span>');
+            // Boot
+            (async () => {
+                $('apple-path').setAttribute('d', APPLE_PATH);
+
+                addLine('<span class="comment">Loading from <span class="cyan">github.com/' + REPO + '</span>...</span>');
                 await fetchDir('');
-                await delay(300);
-                addLine('<span class="out">ready. type <span class="value">help</span> for commands</span>');
+
+                addLine('<span class="green">✓</span> <span class="out">Ready. Type </span><span class="cyan">help</span><span class="out"> for commands.</span>');
+                addLine('');
+
                 input.focus();
-            };
-            boot();
+            })();
         })();
     </script>
 </body>
