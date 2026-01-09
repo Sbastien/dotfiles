@@ -2,95 +2,29 @@
 # macOS
 # ============================================
 .DS_Store
-.AppleDouble
-.LSOverride
 ._*
 .Spotlight-V100
 .Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-.AppleDB
-.AppleDesktop
 
 # ============================================
-# IDEs & Editors
+# Editors
 # ============================================
-.vscode/
-.idea/
 *.swp
 *.swo
-*.swn
 *~
-.*.swp
-.*.swo
-*.sublime-project
-*.sublime-workspace
 
 # ============================================
-# Node.js
-# ============================================
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# ============================================
-# Python
-# ============================================
-__pycache__/
-*.py[cod]
-*$py.class
-*.pyc
-.Python
-.venv/
-venv/
-env/
-ENV/
-.pytest_cache/
-*.egg-info/
-
-# ============================================
-# Environment & Secrets
+# Secrets
 # ============================================
 .env
 .env.*
 !.env.example
 *.key
 *.pem
-credentials.json
-secrets.yaml
 
 # ============================================
-# Logs & Temporary
+# Temporary
 # ============================================
-*.log
 *.tmp
 *.temp
 *.bak
-*.cache
-.cache/
-
-# ============================================
-# Build artifacts
-# ============================================
-build/
-dist/
-*.o
-*.exe
-*.dll
-*.dSYM/
-*.so
-
-# ============================================
-# Archives
-# ============================================
-*.zip
-*.tar.gz
-*.rar
-*.7z
-
-# ============================================
-# Claude Code
-# ============================================
-.claude/
