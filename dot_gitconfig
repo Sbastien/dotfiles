@@ -20,7 +20,30 @@
 
 [delta]
     navigate = true
-	dark = true
+    dark = true
+    line-numbers = true
+    side-by-side = true
+    syntax-theme = OneHalfDark
+    plus-style = "syntax #1e3a2f"
+    minus-style = "syntax #3a1e1e"
+    plus-emph-style = "syntax #2e5a4a"
+    minus-emph-style = "syntax #5a2e2e"
+    line-numbers-left-style = "#5c6370"
+    line-numbers-right-style = "#5c6370"
+    line-numbers-minus-style = "#e06c75"
+    line-numbers-plus-style = "#98c379"
+    file-style = "bold #61afef"
+    file-decoration-style = "#61afef ul"
+    hunk-header-style = "#c678dd"
+    hunk-header-decoration-style = "#5c6370 box"
+    commit-decoration-style = "bold #e5c07b box ul"
+    blame-code-style = syntax
+    blame-palette = "#1e2127 #282c34 #3e4451"
+    hyperlinks = true
+    hyperlinks-file-link-format = "vscode://file/{path}:{line}"
+
+[delta "unified"]
+    side-by-side = false
 
 [merge]
     conflictstyle = zdiff3
@@ -68,6 +91,8 @@
     d = diff
     df = diff
     dc = diff --cached
+    du = "!git -c delta.side-by-side=false diff"
+    dcu = "!git -c delta.side-by-side=false diff --cached"
 
     # Log
     lg = log --oneline --graph --decorate --all
