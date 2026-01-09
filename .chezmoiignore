@@ -1,89 +1,10 @@
-# ============================================
-# Chezmoi Ignore File
-# ============================================
-# Files and directories that chezmoi should NOT manage
-
-# ============================================
-# Documentation & Development
-# ============================================
+# Documentation
 README.md
 LICENSE
-CHANGELOG.md
-.editorconfig
 
-# ============================================
-# Git & Version Control
-# ============================================
+# Git
 .git/
 .gitignore
-.gitattributes
 
-# ============================================
 # macOS
-# ============================================
 .DS_Store
-.AppleDouble
-.LSOverride
-._*
-
-# ============================================
-# IDE & Editors
-# ============================================
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.*.swp
-
-# ============================================
-# Temporary & Cache Files
-# ============================================
-*.tmp
-*.temp
-*.log
-*.cache
-.cache/
-
-# ============================================
-# Sensitive Files (should be in gitconfig.local)
-# ============================================
-# These should never be managed by chezmoi
-**/credentials
-**/secrets
-**/.env
-**/.env.*
-!**/.env.example
-
-# ============================================
-# Node & Package Managers
-# ============================================
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# ============================================
-# Python
-# ============================================
-__pycache__/
-*.py[cod]
-*$py.class
-.Python
-*.so
-.venv/
-venv/
-ENV/
-
-# ============================================
-# Chezmoi Specific
-# ============================================
-# Don't manage these chezmoi files themselves
-.chezmoi.toml.tmpl  # Uncomment if you use templates
-
-# ============================================
-# Optional: Local overrides
-# ============================================
-# Uncomment these if you want local-only configs
-# *.local
-# **/local/**

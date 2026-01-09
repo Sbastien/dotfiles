@@ -1,5 +1,3 @@
-# Chezmoi configuration
-
 [edit]
     command = "nvim"
 
@@ -12,5 +10,11 @@
     args = ["-d"]
 
 [git]
-    autoCommit = false  # Manual commits only
-    autoPush = false    # Keep push manual for control
+    autoCommit = false
+    autoPush = false
+
+[status]
+    pathStyle = "relative"
+
+[update]
+    recurseSubmodules = true
