@@ -1,3 +1,17 @@
+{{- $name := promptStringOnce . "name" "Git author name" | trim -}}
+{{- $email := promptStringOnce . "email" "Git email (personal)" | trim | lower -}}
+{{- $workEmail := promptStringOnce . "workEmail" "Git email (work, optional)" | trim | lower -}}
+{{- $workDir := "~/projects/work/" -}}
+{{- if $workEmail -}}
+{{- $workDir = promptStringOnce . "workDir" "Work projects directory (e.g. ~/work)" | trim -}}
+{{- end -}}
+
+[data]
+    name = {{ $name | quote }}
+    email = {{ $email | quote }}
+    workEmail = {{ $workEmail | quote }}
+    workDir = {{ $workDir | quote }}
+
 [edit]
     command = "nvim"
 

@@ -106,4 +106,8 @@
     undo = reset HEAD~1 --soft
 
 [include]
-    path = ~/.gitconfig.local
+    path = ~/.gitconfig.personal
+{{ if .workEmail }}
+[includeIf "gitdir:{{ .workDir | trimSuffix "/" }}/"]
+    path = ~/.gitconfig.professional
+{{ end }}
