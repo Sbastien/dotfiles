@@ -1,14 +1,2 @@
-# Initialize Homebrew
+# Initialize Homebrew (needs to be in zprofile for PATH)
 eval "$(/opt/homebrew/bin/brew shellenv)"
-
-# Initialize mise
-eval "$(mise activate zsh)"
-
-# Default editor
-export EDITOR="nvim"
-
-# FZF default options
-export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border"
-
-# iTerm2 shell integration
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
