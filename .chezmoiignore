@@ -4,7 +4,6 @@ LICENSE
 
 # Git
 .git/
-.gitignore
 
 # macOS
 .DS_Store
