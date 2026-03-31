@@ -74,7 +74,7 @@ alias chrome-debug='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chro
 # ============================================
 alias c="clear"
 alias h="history"
-alias path="echo $PATH | tr ':' '\n'"
+alias path='echo $PATH | tr ":" "\n"'
 alias ports="lsof -iTCP -sTCP:LISTEN -n -P"
 alias myip="curl -s ifconfig.me"
 alias localip="ipconfig getifaddr en0"
