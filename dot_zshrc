@@ -35,7 +35,12 @@ unset _zcd
 # This filesystem is case-insensitive, so case-sensitive completion refuses
 # names the shell can already resolve: ~/docu -> ~/Documents.
 zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]-_}={[:upper:][:lower:]_-}'
-zstyle ':completion:*' menu select
+# fzf-tab wants `no`, not the absence of the style: it reads the value to know
+# it may capture the unambiguous prefix itself. `select` leaves zsh's own menu
+# live on any widget fzf-tab does not handle.
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --icons=auto --color=always $realpath'
 # An empty spec still colourises, so this keeps working with LS_COLORS unset.
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
@@ -56,7 +61,6 @@ bindkey '^[[1;5C' forward-word
 bindkey '^[[1;5D' backward-word
 bindkey '^[[H' beginning-of-line
 bindkey '^[[F' end-of-line
-bindkey '^[[Z' reverse-menu-complete
 
 autoload -Uz edit-command-line
 zle -N edit-command-line
@@ -70,5 +74,8 @@ eval "$(command wt config shell init zsh)"
 
 for f in "$HOME/.config/zshrc"/*.zsh(N); do source "$f"; done
 
+# After compinit and after the local *.zsh glob, so nothing unmanaged rebinds
+# ^I later; before the two plugins upstream calls widget wrappers.
+source "$HOME/.local/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh"
 source "$HOME/.local/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
 source "$HOME/.local/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

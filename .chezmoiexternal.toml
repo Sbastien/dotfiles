@@ -1,8 +1,8 @@
-# There is no zsh plugin framework. .zshrc sources two of these clones directly,
-# zsh-autosuggestions and zsh-syntax-highlighting. zsh-completions is never
-# sourced: only its src/ is prepended to fpath, so deleting it for want of a
-# source line drops 192 completion definitions and reports nothing -- a missing
-# fpath entry is not an error.
+# There is no zsh plugin framework. .zshrc sources three of these clones
+# directly: fzf-tab, zsh-autosuggestions and zsh-syntax-highlighting.
+# zsh-completions is never sourced: only its src/ is prepended to fpath, so
+# deleting it for want of a source line drops 192 completion definitions and
+# reports nothing -- a missing fpath entry is not an error.
 # --ff-only fails the pull on a rewritten upstream history instead of merging it.
 
 [".local/share/zsh/plugins/zsh-syntax-highlighting"]
@@ -17,6 +17,13 @@
     url = "https://github.com/zsh-users/zsh-autosuggestions.git"
     refreshPeriod = "168h"
     [".local/share/zsh/plugins/zsh-autosuggestions".pull]
+        args = ["--ff-only"]
+
+[".local/share/zsh/plugins/fzf-tab"]
+    type = "git-repo"
+    url = "https://github.com/Aloxaf/fzf-tab.git"
+    refreshPeriod = "168h"
+    [".local/share/zsh/plugins/fzf-tab".pull]
         args = ["--ff-only"]
 
 [".local/share/zsh/plugins/zsh-completions"]
