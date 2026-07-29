@@ -2,8 +2,9 @@
 description = "syntax-check every shell file, then assert four things that fail silently"
 run = [
   # One file per invocation: `zsh -n a b` makes b a positional parameter of a
-  # and exits 0 however broken b is.
+  # and exits 0 however broken b is. `fish --no-execute` splits the same way.
   'for f in dot_zshrc dot_zprofile dot_config/zshrc/*.zsh; do zsh -n "$f" || exit 1; done',
+  'for f in $(find dot_config/fish -name "*.fish"); do fish --no-execute "$f" || exit 1; done',
   "shellcheck -s sh .chezmoiscripts/*.sh",
   "shfmt -d -i 2 -ci .chezmoiscripts/*.sh",
   # None of these names starts with a dot, so chezmoi has no reason of its own
