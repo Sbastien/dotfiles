@@ -20,7 +20,16 @@ unsetopt flowcontrol
 WORDCHARS=''
 
 fpath=("$HOME/.local/share/zsh/plugins/zsh-completions/src" $fpath)
-autoload -Uz compinit && compinit
+ZCOMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
+mkdir -p "${ZCOMPDUMP:h}"
+autoload -Uz compinit
+# (Nmh-24) is one stat, empty unless the dump is under a day old, so -C holds for
+# a day. It skips the security scan and the rebuild, which is 18 of compinit's
+# ms. The cost: a completion installed today is not offered until the dump
+# expires, silently. Delete the dump to pick one up now.
+_zcd=("$ZCOMPDUMP"(Nmh-24))
+compinit ${_zcd:+-C} -d "$ZCOMPDUMP"
+unset _zcd
 # This filesystem is case-insensitive, so case-sensitive completion refuses
 # names the shell can already resolve: ~/docu -> ~/Documents.
 zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]-_}={[:upper:][:lower:]_-}'

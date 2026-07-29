@@ -1,2 +1,9 @@
 # Initialize Homebrew (needs to be in zprofile for PATH)
 eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Stops Terminal.app writing a per-session file into ~/.zsh_sessions. It has to
+# be set here and not in .zshrc: /etc/zshrc sources the Apple script that reads
+# it, and /etc/zshrc runs after ~/.zprofile but before ~/.zshrc. Ghostty never
+# triggers it — the script tests TERM_PROGRAM — but the macOS defaults script
+# configures Terminal.app, so it does get opened.
+export SHELL_SESSIONS_DISABLE=1
