@@ -30,8 +30,3 @@ macos-option-as-alt = true
 # the confirmation.
 confirm-close-surface = false
 window-save-state = always
-
-# Trimmed from the default cursor,no-sudo,title,no-ssh-env,no-ssh-terminfo,path.
-# sudo stays off: it rewrites the sudo command to carry terminfo, which is
-# convenience this setup never asked for.
-shell-integration-features = cursor,title,path,no-sudo

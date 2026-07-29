@@ -48,8 +48,6 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
 # 3 lets Tab reach every control, not only text fields and lists.
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
-defaults write com.apple.screensaver askForPassword -int 1
-defaults write com.apple.screensaver askForPasswordDelay -int 0
 defaults write com.apple.screencapture location -string "$HOME/Desktop"
 defaults write com.apple.screencapture type -string png
 defaults write com.apple.screencapture disable-shadow -bool true

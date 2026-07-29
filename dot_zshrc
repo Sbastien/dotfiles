@@ -71,5 +71,4 @@ eval "$(command wt config shell init zsh)"
 for f in "$HOME/.config/zshrc"/*.zsh(N); do source "$f"; done
 
 source "$HOME/.local/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
-# Last: it wraps every ZLE widget that exists when it is sourced.
 source "$HOME/.local/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

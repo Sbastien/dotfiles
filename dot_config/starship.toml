@@ -51,11 +51,8 @@ color_duration = ''
 # already right is absent, not restated — `disabled = false` appears only on the
 # three that ship disabled.
 
-# One machine, one user, never over SSH: the name was 11 constant characters on
-# every prompt. starship still shows it as root or on a remote session, which is
-# when it means something.
+# Only rendered as root or over SSH, which is starship's own default.
 [username]
-show_always = false
 style_user = "fg:color_username"
 style_root = "bold fg:color_danger"
 format = '[ $user ]($style)'
