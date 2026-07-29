@@ -41,17 +41,8 @@ When unsure, delete — a missing comment is cheaper than a misleading one.
 - **A template that renders empty is deleted, not written** — hence
   `dot_gitconfig.professional.tmpl` disappearing on a machine with no work email,
   and the `empty_` prefix on `~/.hushlogin`.
-
-## Known gaps — deliberate, do not "fix"
-
-- **No tests, no version pinning, no startup budget.** All three were here and
-  removed: with one machine and one user, each cost more attention than it
-  caught. CI was never here, and nothing here runs anywhere but this Mac.
-- **`dot_config/mise/config.toml.tmpl` says `latest`, not a version.** It
-  version-controls what `mise run lint` shells out to, not which version.
-- **`~/.config/herdr/config.toml` is not managed here.** herdr writes that file
-  itself, so managing it would make chezmoi the second owner of a path that
-  already has one. Its theme is `terminal`, which follows Ghostty, so the setting
-  most likely to drift is the one that cannot.
+- **`~/.config/herdr/` is not managed here.** herdr writes its own
+  `config.toml` into a directory it also fills with sockets, logs and session
+  state, so managing that path would make chezmoi its second owner.
 
 Run `mise run lint` before committing.
