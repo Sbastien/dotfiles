@@ -1,3 +1,7 @@
+[user]
+    name = {{ .name }}
+    email = {{ .email }}
+
 [core]
     editor = nvim
     excludesFile = ~/.gitignore
@@ -6,9 +10,6 @@
 
 [init]
     defaultBranch = main
-
-[color]
-    ui = auto
 
 [diff]
     colorMoved = default
@@ -41,9 +42,6 @@
     hyperlinks = true
     hyperlinks-file-link-format = "vscode://file/{path}:{line}"
 
-[delta "unified"]
-    side-by-side = false
-
 [merge]
     conflictstyle = zdiff3
 
@@ -53,60 +51,52 @@
 [rebase]
     autoSquash = true
     autoStash = true
+    # Rebasing a stack moves the branches pointing inside it too, instead of
+    # leaving them on the commits that were just rewritten.
+    updateRefs = true
 
 [pull]
     rebase = true
 
 [push]
-    default = simple
     autoSetupRemote = true
 
 [fetch]
     prune = true
 
 [alias]
-    # Status & Info
     s = status
 
-    # Branch & Checkout
     co = checkout
     cob = checkout -b
     br = branch
 
-    # Commit
     cm = commit -m
     c = commit
     amend = commit --amend --no-edit
     wip = commit -m "WIP"
     fixup = commit --fixup
 
-    # Add
     a = add
     aa = add .
 
-    # Push & Pull
     p = push
     pl = pull
     pr = pull --rebase
+    # Rebases onto the remote branch of the same name, never onto main.
     up = !git fetch origin && git rebase origin/$(git rev-parse --abbrev-ref HEAD)
 
-    # Diff
     d = diff
     dc = diff --cached
     du = "!git -c delta.side-by-side=false diff"
     dcu = "!git -c delta.side-by-side=false diff --cached"
 
-    # Log
     lg = log --oneline --graph --decorate --all
     l = log --oneline --graph --decorate
     contributors = shortlog -sn --all --no-merges
 
-    # Undo
     unstage = reset HEAD --
     undo = reset HEAD~1 --soft
-
-[include]
-    path = ~/.gitconfig.personal
 {{ if .workEmail }}
 [includeIf "gitdir:{{ .workDir | trimSuffix "/" }}/"]
     path = ~/.gitconfig.professional

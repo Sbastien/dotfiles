@@ -1,10 +1,8 @@
 {{- $name := promptStringOnce . "name" "Git author name" | trim -}}
 {{- $email := promptStringOnce . "email" "Git email (personal)" | trim | lower -}}
 {{- $workEmail := promptStringOnce . "workEmail" "Git email (work, optional)" | trim | lower -}}
-{{- $workDir := "~/projects/work/" -}}
-{{- if $workEmail -}}
-{{- $workDir = promptStringOnce . "workDir" "Work projects directory (e.g. ~/work)" | trim -}}
-{{- end -}}
+{{- $workDir := "" -}}
+{{- if $workEmail }}{{ $workDir = promptStringOnce . "workDir" "Work projects directory (e.g. ~/work)" | trim }}{{ end -}}
 
 [data]
     name = {{ $name | quote }}
@@ -22,13 +20,3 @@
 [merge]
     command = "nvim"
     args = ["-d"]
-
-[git]
-    autoCommit = false
-    autoPush = false
-
-[status]
-    pathStyle = "relative"
-
-[update]
-    recurseSubmodules = true

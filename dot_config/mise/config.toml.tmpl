@@ -1,0 +1,20 @@
+[tools]
+# Fallback for any directory with no mise.toml of its own, and the node that
+# hosts the global npm install.
+node = "20"
+# What `mise run lint` shells out to in this repository.
+shellcheck = "latest"
+shfmt = "latest"
+
+[settings]
+# mise honours this key in the global config only — it prints "ignored for
+# security reasons" anywhere else, so it cannot move into a repository's own
+# mise.toml. Trust is otherwise keyed on file content, so editing a task would
+# demand a fresh `mise trust` every time.
+trusted_config_paths = [
+  "{{ .chezmoi.sourceDir }}",
+{{- if .workDir }}
+  # Every `wt switch --create` clone, not only the checkout.
+  "{{ .workDir }}",
+{{- end }}
+]

@@ -1,9 +1,8 @@
-# Documentation
+# Patterns match TARGET paths, relative to $HOME — not source paths.
 README.md
 LICENSE
-
-# Git
-.git/
-
-# macOS
-.DS_Store
+AGENTS.md
+CLAUDE.md
+mise.toml
+# Gitignored, but chezmoi reads the source tree from disk and would deploy it.
+docs

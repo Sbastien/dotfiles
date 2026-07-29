@@ -1,0 +1,9 @@
+# Machine-local Claude Code state
+.claude/
+
+# Specs and plans stay local: they describe work-internal infrastructure
+# and this repo is public
+.superpowers/
+docs/superpowers/
+
+.DS_Store

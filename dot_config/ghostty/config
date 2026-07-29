@@ -1,0 +1,28 @@
+# Verified against Ghostty 1.3.1.
+#
+# There is deliberately no shell-integration line: `detect` is the default and
+# Ghostty handles zsh itself. Unlike iTerm2, nothing gets sourced from .zshrc
+# and nothing is paid at startup.
+
+theme = Atom One Dark
+font-family = FiraCode Nerd Font Mono
+font-size = 12
+
+window-padding-x = 8
+window-padding-y = 8
+
+cursor-style = bar
+mouse-hide-while-typing = true
+
+# Option as Alt, carried over from iTerm2, so word motions keep working.
+macos-option-as-alt = true
+
+# Asking before close interrupts more than it saves — the shell's own exit is
+# the confirmation.
+confirm-close-surface = false
+window-save-state = always
+
+# Trimmed from the default cursor,no-sudo,title,no-ssh-env,no-ssh-terminfo,path.
+# sudo stays off: it rewrites the sudo command to carry terminfo, which is
+# convenience this setup never asked for.
+shell-integration-features = cursor,title,path,no-sudo

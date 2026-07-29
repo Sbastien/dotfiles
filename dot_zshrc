@@ -1,37 +1,64 @@
-# ============================================
-# Environment
-# ============================================
+typeset -U path PATH
 export PATH="$HOME/.local/bin:$PATH"
 export EDITOR="nvim"
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border"
 
-# Initialize mise
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+# Must match HISTSIZE: zsh trims the file to SAVEHIST on exit, so a smaller
+# value throws away the difference every time the shell closes.
+SAVEHIST=50000
+setopt extended_history hist_expire_dups_first hist_ignore_dups hist_ignore_space hist_verify share_history
+setopt interactivecomments always_to_end complete_in_word
+setopt auto_cd auto_pushd pushd_ignore_dups
+# Otherwise a stray ^S freezes all output until ^Q, with nothing on screen to
+# say why.
+unsetopt flowcontrol
+
+# Only alphanumerics count as word characters, so ^W eats one path segment
+# instead of the whole path.
+WORDCHARS=''
+
+fpath=("$HOME/.local/share/zsh/plugins/zsh-completions/src" $fpath)
+autoload -Uz compinit && compinit
+# This filesystem is case-insensitive, so case-sensitive completion refuses
+# names the shell can already resolve: ~/docu -> ~/Documents.
+zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]-_}={[:upper:][:lower:]_-}'
+zstyle ':completion:*' menu select
+# An empty spec still colourises, so this keeps working with LS_COLORS unset.
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# EDITOR=nvim matches the vi glob zsh uses to guess a keymap, so without this
+# the shell comes up in viins and ^A/^E/^R stop behaving.
+bindkey -e
+
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey '^[[A' up-line-or-beginning-search
+bindkey '^[[B' down-line-or-beginning-search
+bindkey '^[[3~' delete-char
+# These literal forms are what the terminal sends outside application cursor
+# mode, which nothing here turns on. Leaving ^[[1;5C/D unbound is worse than a
+# dead key: ^[[1 is a live prefix, so zsh self-inserts the tail as `;5D`.
+bindkey '^[[1;5C' forward-word
+bindkey '^[[1;5D' backward-word
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
+bindkey '^[[Z' reverse-menu-complete
+
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
+
 eval "$(mise activate zsh)"
-
-# ============================================
-# Oh My Zsh
-# ============================================
-export ZSH="$HOME/.oh-my-zsh"
-plugins=(git fzf zsh-syntax-highlighting zsh-autosuggestions zsh-completions)
-source $ZSH/oh-my-zsh.sh
-
-# ============================================
-# Load aliases & functions
-# ============================================
-[ -f "$HOME/.config/zshrc/aliases.zsh" ] && source "$HOME/.config/zshrc/aliases.zsh"
-[ -f "$HOME/.config/zshrc/functions.zsh" ] && source "$HOME/.config/zshrc/functions.zsh"
-[ -f "$HOME/.config/zshrc/secrets.zsh" ] && source "$HOME/.config/zshrc/secrets.zsh"
-
-# ============================================
-# Prompt & Tools
-# ============================================
 eval "$(starship init zsh)"
-command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
+eval "$(fzf --zsh)"
+eval "$(zoxide init zsh)"
+eval "$(command wt config shell init zsh)"
 
-# iTerm2 shell integration
-[ -f "${HOME}/.iterm2_shell_integration.zsh" ] && source "${HOME}/.iterm2_shell_integration.zsh"
+for f in "$HOME/.config/zshrc"/*.zsh(N); do source "$f"; done
 
-# ============================================
-# Worktrunk integration (worktree)
-# ============================================
-if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
+source "$HOME/.local/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+# Last: it wraps every ZLE widget that exists when it is sourced.
+source "$HOME/.local/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

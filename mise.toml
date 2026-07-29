@@ -1,0 +1,32 @@
+[tasks.lint]
+description = "syntax-check every shell file, then assert four things that fail silently"
+run = [
+  # One file per invocation: `zsh -n a b` makes b a positional parameter of a
+  # and exits 0 however broken b is.
+  'for f in dot_zshrc dot_zprofile dot_config/zshrc/*.zsh; do zsh -n "$f" || exit 1; done',
+  "shellcheck -s sh .chezmoiscripts/*.sh",
+  "shfmt -d -i 2 -ci .chezmoiscripts/*.sh",
+  # None of these names starts with a dot, so chezmoi has no reason of its own
+  # to skip them and would deploy each one into $HOME.
+  '! chezmoi managed | grep -E "^(mise\.toml|README\.md|LICENSE|AGENTS\.md|CLAUDE\.md|docs)"',
+  # Ghostty drops an unknown key silently at launch; only +validate-config says so.
+  "ghostty +validate-config --config-file=dot_config/ghostty/config",
+  # Drop the trailing slash and `gitdir:` matches the directory but no repo
+  # under it, so every work commit goes out with the personal email.
+  '''grep -q 'trimSuffix "/" }}/"' dot_gitconfig.tmpl''',
+  # Two work paths were once found staged in this public repository, and only
+  # reading caught them. `git grep` rather than `grep -r` on purpose: it reads
+  # tracked files, which is what actually ships, and a file enters that set the
+  # moment it is added. Prints filenames, never the matching line. The raw block
+  # is mandatory — mise renders every `run` through Tera, which reads chezmoi's
+  # `{{ .workDir }}` as its own syntax and refuses to parse it.
+  '''{% raw %}WD=$(chezmoi execute-template '{{ .workDir }}'){% endraw %}; [ -z "$WD" ] || ! git grep -lIF "$(basename "$WD")"''',
+]
+
+[tasks.fmt]
+description = "reformat the sh scripts in place"
+run = "shfmt -w -i 2 -ci .chezmoiscripts/*.sh"
+
+[tasks.doctor]
+description = "read-only: config drift here, packages in the Brewfile repo"
+run = ["chezmoi verify", "~/projects/Brewfile/bin/doctor"]
