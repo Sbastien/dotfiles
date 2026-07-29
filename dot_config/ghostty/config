@@ -30,3 +30,9 @@ macos-option-as-alt = true
 # the confirmation.
 confirm-close-surface = false
 window-save-state = always
+
+# 0x0c is ctrl+l. Cmd is unencodable in terminal input, so the default
+# clear_screen can only reach Ghostty's own buffer — and under herdr, which owns
+# the grid and repaints over it, that looks like a dead key. Sending the byte
+# reaches the pane's shell instead. Costs the scrollback purge outside herdr.
+keybind = super+k=text:\x0c
