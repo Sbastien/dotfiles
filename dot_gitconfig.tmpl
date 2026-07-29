@@ -25,22 +25,33 @@
     dark = true
     line-numbers = true
     side-by-side = true
-    syntax-theme = OneHalfDark
-    plus-style = "syntax #1e3a2f"
-    minus-style = "syntax #3a1e1e"
-    plus-emph-style = "syntax #2e5a4a"
-    minus-emph-style = "syntax #5a2e2e"
-    line-numbers-left-style = "#5c6370"
-    line-numbers-right-style = "#5c6370"
-    line-numbers-minus-style = "#e06c75"
-    line-numbers-plus-style = "#98c379"
-    file-style = "bold #61afef"
-    file-decoration-style = "#61afef ul"
-    hunk-header-style = "#c678dd"
-    hunk-header-decoration-style = "#5c6370 box"
-    commit-decoration-style = "bold #e5c07b box ul"
+    # An unset delta style falls back to 24-bit; `delta --show-config` is the only
+    # place those fallbacks are visible.
+    syntax-theme = ansi
+    # ANSI 16 has no tint faint enough to read code through, so the diff colour
+    # goes on the foreground and overrides syntax. Necessary: the ansi theme paints
+    # keys red and strings green, read as diff colours on a changed line.
+    plus-style = "green"
+    minus-style = "red"
+    plus-emph-style = "green reverse"
+    minus-emph-style = "red reverse"
+    # delta strips these; with no background they are the unambiguous signal.
+    keep-plus-minus-markers = true
+    plus-empty-line-marker-style = "normal"
+    minus-empty-line-marker-style = "normal"
+    line-numbers-left-style = "brightblack dim"
+    line-numbers-right-style = "brightblack dim"
+    line-numbers-zero-style = "brightblack dim"
+    line-numbers-minus-style = "red"
+    line-numbers-plus-style = "green"
+    file-style = "bold blue"
+    file-decoration-style = "blue ul"
+    hunk-header-style = "magenta"
+    hunk-header-decoration-style = "brightblack box"
+    commit-decoration-style = "bold yellow box ul"
     blame-code-style = syntax
-    blame-palette = "#1e2127 #282c34 #3e4451"
+    # Two stripes, because ANSI 16 carries two dark neutrals and not a ramp.
+    blame-palette = "black brightblack"
     hyperlinks = true
     hyperlinks-file-link-format = "vscode://file/{path}:{line}"
 

@@ -22,6 +22,11 @@ rule can catch this. Only reading can.
 
 - **One owner per path in `$HOME`.** Two owners means one silently winning, and
   the loser is usually an unmanaged copy no tool ever opens again.
+- **A hex outside `dot_config/ghostty/config` has opted out of the palette.**
+  Every other tool is told to inherit Ghostty's sixteen ANSI colours, so a
+  hardcoded colour goes on rendering the old theme after a change and nothing says
+  so. A style left unset does the same — delta's defaults are 24-bit, and only
+  `delta --show-config` names them.
 - **A template that renders empty is deleted, not written** — hence
   `dot_gitconfig.professional.tmpl` disappearing on a machine with no work email,
   and the `empty_` prefix on `~/.hushlogin`.
@@ -33,5 +38,9 @@ rule can catch this. Only reading can.
   caught. CI was never here, and nothing here runs anywhere but this Mac.
 - **`dot_config/mise/config.toml.tmpl` says `latest`, not a version.** It
   version-controls what `mise run lint` shells out to, not which version.
+- **`~/.config/herdr/config.toml` is not managed here.** herdr writes that file
+  itself, so managing it would make chezmoi the second owner of a path that
+  already has one. Its theme is `terminal`, which follows Ghostty, so the setting
+  most likely to drift is the one that cannot.
 
 Run `mise run lint` before committing.

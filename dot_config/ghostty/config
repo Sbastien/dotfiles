@@ -4,7 +4,10 @@
 # Ghostty handles zsh itself. Unlike iTerm2, nothing gets sourced from .zshrc
 # and nothing is paid at startup.
 
-theme = Atom One Dark
+# A replacement needs brights distinct from their normals, yellow in palette 11
+# (init.lua puts nvim's keywords there), and blue far enough from cyan to tell
+# language versions from the git block.
+theme = GitHub Dark Dimmed
 
 # Taller x-height than FiraCode, so 12pt stays legible without costing columns.
 font-family = JetBrainsMono Nerd Font Mono

@@ -1,0 +1,4 @@
+# One command-line argument per line.
+
+# Without this bat picks Monokai Extended.
+--theme=ansi
