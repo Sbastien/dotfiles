@@ -18,6 +18,17 @@ directory and every identity value live in machine-local
 through `promptStringOnce` — hardcode one into a template and it ships. No lint
 rule can catch this. Only reading can.
 
+## Comments
+
+Default to none. A comment earns its place only when it explains why — and that why isn't already in the code, the specs, or git history.
+
+- **No "what"** — Restating a line, narrating steps ("first we…"), or logging history ("used to return nil"). If behavior needs documenting, write a spec; git covers what changed.
+- **No empty "whys"** — Justifying with an always-true goal (consistency, readability, correctness) says nothing.
+- **No session leaks** — "as discussed", rejected alternatives, anything written for a reader who was in the room.
+- **Keep the real why** — A non-obvious choice's reason: external quirk (link the issue), timing/ordering constraint, magic number, actionable TODO/FIXME.
+
+When unsure, delete — a missing comment is cheaper than a misleading one.
+
 ## Traps
 
 - **One owner per path in `$HOME`.** Two owners means one silently winning, and
