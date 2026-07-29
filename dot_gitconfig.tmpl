@@ -4,6 +4,8 @@
 
 [core]
     editor = nvim
+    # Replaces git's XDG default, so a ~/.config/git/ignore beside it would hold
+    # rules that never apply. `git check-ignore -v` names the file that decided.
     excludesFile = ~/.gitignore
     autocrlf = input
     pager = delta

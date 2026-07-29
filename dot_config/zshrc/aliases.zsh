@@ -6,6 +6,10 @@ alias ....="cd ../../.."
 alias projects="cd ~/projects/"
 alias icloud="cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/"
 
+# Replacing a tool's name only works when the replacement takes its flags. Do
+# not alias du, df, ps, top or tree: dust, duf, procs, btop and eza read an
+# unrecognised argument as a query rather than an error — `ps aux` came back
+# exit 0 listing one process. Adding flags to the tool you name is fine.
 alias ls="eza --icons --group-directories-first"
 # eza's -a is ls's -A (dotfiles, no . or ..); -aa is ls's -a.
 alias ll="eza -lh --icons --group-directories-first"

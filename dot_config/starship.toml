@@ -47,10 +47,6 @@ color_other = ''
 color_time = ''
 color_duration = ''
 
-color_vimcmd_ok = 'green'
-color_vimcmd_replace = 'purple'
-color_vimcmd_visual = 'yellow'
-
 # Every module below overrides a starship default. A module whose defaults are
 # already right is absent, not restated — `disabled = false` appears only on the
 # three that ship disabled.
@@ -179,7 +175,3 @@ style = 'bold fg:color_danger'
 [character]
 success_symbol = '[❯](bold fg:color_ok)'
 error_symbol = '[❯](bold fg:color_danger)'
-vimcmd_symbol = '[❮](bold fg:color_vimcmd_ok)'
-vimcmd_replace_one_symbol = '[❮](bold fg:color_vimcmd_replace)'
-vimcmd_replace_symbol = '[❮](bold fg:color_vimcmd_replace)'
-vimcmd_visual_symbol = '[❮](bold fg:color_vimcmd_visual)'
