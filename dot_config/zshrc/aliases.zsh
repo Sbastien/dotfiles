@@ -10,12 +10,14 @@ alias icloud="cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/"
 # not alias du, df, ps, top or tree: dust, duf, procs, btop and eza read an
 # unrecognised argument as a query rather than an error — `ps aux` came back
 # exit 0 listing one process. Adding flags to the tool you name is fine.
-alias ls="eza --icons --group-directories-first"
+# --icons=auto, never bare: its value is optional, so a trailing --icons eats
+# the path instead and `lt somedir` exits 2.
+alias ls="eza --icons=auto --group-directories-first"
 # eza's -a is ls's -A (dotfiles, no . or ..); -aa is ls's -a.
-alias ll="eza -lh --icons --group-directories-first"
-alias l="eza -laah --icons --group-directories-first"
-alias la="eza -lah --icons --group-directories-first"
-alias lt="eza --tree --level=2 --icons"
+alias ll="eza -lh --icons=auto --group-directories-first"
+alias l="eza -laah --icons=auto --group-directories-first"
+alias la="eza -lah --icons=auto --group-directories-first"
+alias lt="eza --tree --level=2 --icons=auto"
 
 alias batp="bat --style=plain --paging=never"
 
