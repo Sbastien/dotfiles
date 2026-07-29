@@ -69,6 +69,10 @@ bindkey '^X^E' edit-command-line
 eval "$(mise activate zsh)"
 eval "$(starship init zsh)"
 eval "$(fzf --zsh)"
+# After fzf, which also binds ^R and would otherwise win. --disable-ai drops a
+# default binding of `?` to a remote model call; --disable-up-arrow keeps the
+# arrow on up-line-or-beginning-search.
+eval "$(atuin init zsh --disable-up-arrow --disable-ai)"
 eval "$(zoxide init zsh)"
 eval "$(command wt config shell init zsh)"
 

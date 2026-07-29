@@ -41,8 +41,9 @@ When unsure, delete — a missing comment is cheaper than a misleading one.
 - **A template that renders empty is deleted, not written** — hence
   `dot_gitconfig.professional.tmpl` disappearing on a machine with no work email,
   and the `empty_` prefix on `~/.hushlogin`.
-- **`~/.config/herdr/` is not managed here.** herdr writes its own
-  `config.toml` into a directory it also fills with sockets, logs and session
-  state, so managing that path would make chezmoi its second owner.
+- **`~/.config/herdr/` and `~/.config/atuin/` are not managed here.** Both
+  write their own `config.toml` — herdr into a directory it also fills with
+  sockets and session state — so managing either path would make chezmoi its
+  second owner.
 
 Run `mise run lint` before committing.
