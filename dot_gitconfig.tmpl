@@ -60,6 +60,12 @@
 
 [rerere]
     enabled = true
+    # Without it a replayed resolution is written to the worktree but left
+    # unstaged, so the rerere hit looks like an unresolved conflict.
+    autoUpdate = true
+
+[tag]
+    sort = version:refname
 
 [rebase]
     autoSquash = true
