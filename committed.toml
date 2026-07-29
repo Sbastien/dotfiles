@@ -1,0 +1,7 @@
+# committed's own defaults, with one exception. It wants the description
+# capitalized, which contradicts every subject in this history and Conventional
+# Commits' own examples; `style = "conventional"` does not change that on its
+# own. The rest is the tool's opinion, kept as shipped: subject <= 50 chars and
+# imperative, body lines <= 72, no fixup! or WIP commits.
+style = "conventional"
+subject_capitalized = false

@@ -4,5 +4,6 @@ LICENSE
 AGENTS.md
 CLAUDE.md
 mise.toml
+committed.toml
 # Gitignored, but chezmoi reads the source tree from disk and would deploy it.
 docs
