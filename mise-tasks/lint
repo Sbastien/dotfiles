@@ -1,0 +1,48 @@
+#!/usr/bin/env sh
+#MISE description="lint every shell file and commit message, then assert four things that fail silently"
+#
+# A file task, not a `run =` string in mise.toml: mise executes this from the
+# repository root and never renders it through Tera, so relative paths and brace
+# pairs are literal and shellcheck reads it like any other script.
+set -eu
+
+fail() {
+  echo "lint: $1" >&2
+  exit 1
+}
+
+# One file per invocation: `zsh -n a b` makes b a positional parameter of a and
+# exits 0 however broken b is. `fish --no-execute` splits the same way.
+printf '%s\n' dot_zshrc dot_zprofile dot_config/zshrc/*.zsh | xargs -n1 zsh -n
+find dot_config/fish -name '*.fish' -print0 | xargs -0 -n1 fish --no-execute
+
+shellcheck -s sh .chezmoiscripts/*.sh mise-tasks/lint
+shfmt -d -i 2 -ci .chezmoiscripts/*.sh mise-tasks/lint
+
+# Only what a push would send: two commits predating this rule exceed its
+# 50-character subject, and rewriting published history to satisfy a linter
+# costs more than it buys.
+committed origin/main..HEAD
+
+# Ghostty drops an unknown key silently at launch; only +validate-config says so.
+ghostty +validate-config --config-file=dot_config/ghostty/config
+
+# Every path chezmoi deploys is a dotfile, so anything undotted is a repo file
+# .chezmoiignore forgot and chezmoi would write into $HOME.
+if chezmoi managed | grep -v '^\.'; then
+  fail "the path above is a repository file, not a dotfile: add it to .chezmoiignore"
+fi
+
+# Drop the trailing slash and `gitdir:` matches the directory but no repo under
+# it, so every work commit goes out with the personal email.
+grep -q 'trimSuffix "/" }}/"' dot_gitconfig.tmpl ||
+  fail "dot_gitconfig.tmpl: gitdir: lost its trailing slash"
+
+# Two work paths were once found staged in this public repository, and only
+# reading caught them. `git grep` rather than `grep -r` on purpose: it reads
+# tracked files, which is what actually ships. Prints filenames, never the
+# matching line.
+work_dir=$(chezmoi execute-template '{{ .workDir }}')
+if [ -n "$work_dir" ] && git grep -lIF "$(basename "$work_dir")"; then
+  fail "the tracked file above contains the work path"
+fi

@@ -1,36 +1,8 @@
-[tasks.lint]
-description = "lint every shell file and commit message, then assert four things that fail silently"
-run = [
-  # One file per invocation: `zsh -n a b` makes b a positional parameter of a
-  # and exits 0 however broken b is. `fish --no-execute` splits the same way.
-  'for f in dot_zshrc dot_zprofile dot_config/zshrc/*.zsh; do zsh -n "$f" || exit 1; done',
-  'for f in $(find dot_config/fish -name "*.fish"); do fish --no-execute "$f" || exit 1; done',
-  "shellcheck -s sh .chezmoiscripts/*.sh",
-  "shfmt -d -i 2 -ci .chezmoiscripts/*.sh",
-  # None of these names starts with a dot, so chezmoi has no reason of its own
-  # to skip them and would deploy each one into $HOME.
-  '! chezmoi managed | grep -E "^(mise\.toml|committed\.toml|README\.md|LICENSE|AGENTS\.md|CLAUDE\.md|docs)"',
-  # Only what a push would send: two commits predating this rule exceed its
-  # 50-character subject, and rewriting published history to satisfy a linter
-  # costs more than it buys.
-  "committed origin/main..HEAD",
-  # Ghostty drops an unknown key silently at launch; only +validate-config says so.
-  "ghostty +validate-config --config-file=dot_config/ghostty/config",
-  # Drop the trailing slash and `gitdir:` matches the directory but no repo
-  # under it, so every work commit goes out with the personal email.
-  '''grep -q 'trimSuffix "/" }}/"' dot_gitconfig.tmpl''',
-  # Two work paths were once found staged in this public repository, and only
-  # reading caught them. `git grep` rather than `grep -r` on purpose: it reads
-  # tracked files, which is what actually ships, and a file enters that set the
-  # moment it is added. Prints filenames, never the matching line. The raw block
-  # is mandatory — mise renders every `run` through Tera, which reads chezmoi's
-  # `{{ .workDir }}` as its own syntax and refuses to parse it.
-  '''{% raw %}WD=$(chezmoi execute-template '{{ .workDir }}'){% endraw %}; [ -z "$WD" ] || ! git grep -lIF "$(basename "$WD")"''',
-]
-
+# `lint` is absent on purpose: it lives in mise-tasks/lint, where it is a real
+# script rather than a shell fragment quoted inside TOML and rendered by Tera.
 [tasks.fmt]
 description = "reformat the sh scripts in place"
-run = "shfmt -w -i 2 -ci .chezmoiscripts/*.sh"
+run = "shfmt -w -i 2 -ci .chezmoiscripts/*.sh mise-tasks/lint"
 
 [tasks.doctor]
 description = "read-only: config drift here, packages in the Brewfile repo"
