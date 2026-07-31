@@ -45,6 +45,13 @@ defaults write NSGlobalDomain KeyRepeat -int 2
 defaults write NSGlobalDomain InitialKeyRepeat -int 15
 
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool true
+# Ghostty opts out of the accent panel so key repeats reach the terminal, but it
+# does so in the registration domain, which the line above outranks. The result
+# is a panel Ghostty then fails to let consume the repeats it forwards anyway
+# (ghostty-org/ghostty#10669). An app-domain write outranks both, and scopes the
+# opt-out to Ghostty rather than turning the panel off everywhere.
+defaults write com.mitchellh.ghostty ApplePressAndHoldEnabled -bool false
+
 # 3 lets Tab reach every control, not only text fields and lists.
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 

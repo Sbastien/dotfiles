@@ -23,8 +23,11 @@ window-padding-y = 12
 cursor-style = bar
 mouse-hide-while-typing = true
 
-# Option as Alt, carried over from iTerm2, so word motions keep working.
-macos-option-as-alt = true
+# Left only, so word motions carried over from iTerm2 keep working while right
+# Option stays a macOS dead key. Holding a letter cannot type an accent here:
+# Ghostty forwards the key repeats it should let the press-and-hold panel
+# consume, so the panel opens over a row of repeats (ghostty-org/ghostty#10669).
+macos-option-as-alt = left
 
 # Asking before close interrupts more than it saves — the shell's own exit is
 # the confirmation.
